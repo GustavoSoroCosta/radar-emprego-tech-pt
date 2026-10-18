@@ -1,21 +1,48 @@
-import type { Job } from './types'
+import type { Job, WorkMode } from './types'
 
 export interface CountItem {
   label: string
   count: number
 }
 
-/** Counts how many jobs ask for each technology, most requested first. */
-export function countTechnologies(jobs: Job[], limit = 10): CountItem[] {
+/** Counts jobs per key (a job with several keys counts once for each), most common first. */
+export function countBy(jobs: Job[], keysOf: (job: Job) => string[], limit = 10): CountItem[] {
   const counts = new Map<string, number>()
   for (const job of jobs) {
     // A job that mentions React twice still counts as one job asking for React.
-    for (const tech of new Set(job.technologies)) {
-      counts.set(tech, (counts.get(tech) ?? 0) + 1)
+    for (const key of new Set(keysOf(job))) {
+      counts.set(key, (counts.get(key) ?? 0) + 1)
     }
   }
   return [...counts]
     .map(([label, count]) => ({ label, count }))
     .sort((a, b) => b.count - a.count || a.label.localeCompare(b.label))
     .slice(0, limit)
+}
+
+/** Counts how many jobs ask for each technology, most requested first. */
+export function countTechnologies(jobs: Job[], limit = 10): CountItem[] {
+  return countBy(jobs, (job) => job.technologies, limit)
+}
+
+export const WORK_MODE_LABELS: Record<WorkMode, string> = {
+  onsite: 'Presencial',
+  hybrid: 'Híbrido',
+  remote: 'Remoto',
+}
+
+export function countWorkModes(jobs: Job[]): CountItem[] {
+  return countBy(jobs, (job) => [job.workMode ? WORK_MODE_LABELS[job.workMode] : 'Não indicado'])
+}
+
+const FRONTEND_TITLE = /front[- ]?end|react|angular|vue|\bui\b|web developer/i
+
+/** Frontend roles, judged by the title (the body of a backend role often mentions React too). */
+export function isFrontendJob(job: Job): boolean {
+  return FRONTEND_TITLE.test(job.title)
+}
+
+/** Share of `part` in `total` as a whole percentage, 0 when there is nothing to divide. */
+export function percent(part: number, total: number): number {
+  return total === 0 ? 0 : Math.round((part / total) * 100)
 }
