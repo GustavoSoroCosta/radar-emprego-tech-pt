@@ -1,5 +1,5 @@
 import type { ItjobsJob } from './itjobs'
-import type { Job, WorkMode } from './types'
+import type { Area, Job, WorkMode } from './types'
 
 // itjobs sends the work model as a number. Not documented; confirmed by opening
 // two real job pages for each value on itjobs.pt (18 Oct 2026).
@@ -62,6 +62,19 @@ export function isJunior(title: string): boolean {
   return JUNIOR.test(title)
 }
 
+// Judged by the title only: the body of a backend role often mentions React too.
+// Fullstack is checked first because "Fullstack Java + React" would otherwise look frontend.
+const FULLSTACK_TITLE = /full[- ]?stack/i
+const FRONTEND_TITLE = /front[- ]?end|react|angular|vue|\bui\b|web developer/i
+const BACKEND_TITLE = /back[- ]?end|\bjava\b(?!\s*script)|\.net|\bc#|node|\bphp\b|python|golang|ruby/i
+
+export function classifyArea(title: string): Area {
+  if (FULLSTACK_TITLE.test(title)) return 'fullstack'
+  if (FRONTEND_TITLE.test(title)) return 'frontend'
+  if (BACKEND_TITLE.test(title)) return 'backend'
+  return 'other'
+}
+
 /** Turns HTML from the API into plain text good enough for keyword matching. */
 export function htmlToText(html: string): string {
   return html
@@ -82,6 +95,7 @@ export function toJob(raw: ItjobsJob): Job {
     workMode: toWorkMode(raw.workModel),
     technologies: extractTechnologies(`${raw.title} ${htmlToText(raw.body ?? '')}`),
     junior: isJunior(raw.title),
+    area: classifyArea(raw.title),
     publishedAt: raw.publishedAt,
   }
 }

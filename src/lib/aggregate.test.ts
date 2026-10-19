@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { countBy, countTechnologies, countWorkModes, isFrontendJob, percent } from './aggregate'
+import { countBy, countTechnologies, countWorkModes, percent } from './aggregate'
 import type { Job } from './types'
 
 const job = (overrides: Partial<Job> = {}): Job => ({
@@ -10,6 +10,7 @@ const job = (overrides: Partial<Job> = {}): Job => ({
   workMode: 'remote',
   technologies: [],
   junior: false,
+  area: 'other',
   publishedAt: '2026-01-01',
   ...overrides,
 })
@@ -55,17 +56,6 @@ describe('countWorkModes', () => {
       { label: 'Não indicado', count: 1 },
     ])
   })
-})
-
-describe('isFrontendJob', () => {
-  it.each(['Frontend Developer', 'Front-End Engineer', 'React Developer', 'Angular Developer', 'UI Developer'])(
-    'treats "%s" as frontend',
-    (title) => expect(isFrontendJob(job({ title }))).toBe(true),
-  )
-
-  it.each(['Java Back-End Developer', 'Build Engineer', 'Data Engineer'])('does not treat "%s" as frontend', (title) =>
-    expect(isFrontendJob(job({ title }))).toBe(false),
-  )
 })
 
 describe('percent', () => {

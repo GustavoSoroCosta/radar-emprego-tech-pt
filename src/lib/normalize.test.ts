@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { extractTechnologies, htmlToText, isJunior, toJob, toWorkMode } from './normalize'
+import { classifyArea, extractTechnologies, htmlToText, isJunior, toJob, toWorkMode } from './normalize'
 
 describe('extractTechnologies', () => {
   it('finds technologies regardless of case and punctuation', () => {
@@ -63,6 +63,25 @@ describe('isJunior', () => {
   })
 })
 
+describe('classifyArea', () => {
+  it.each([
+    ['Frontend Developer', 'frontend'],
+    ['Front-End Engineer (Angular)', 'frontend'],
+    ['React Developer', 'frontend'],
+    ['UI Developer', 'frontend'],
+    ['Fullstack Java + React Developer', 'fullstack'],
+    ['Full Stack Engineer', 'fullstack'],
+    ['Java Back-End Developer', 'backend'],
+    ['.NET Developer', 'backend'],
+    ['Python Developer', 'backend'],
+    ['JavaScript Engineer', 'other'],
+    ['Data Engineer', 'other'],
+    ['Build Engineer', 'other'],
+  ])('classifies "%s" as %s', (title, area) => {
+    expect(classifyArea(title)).toBe(area)
+  })
+})
+
 describe('toWorkMode', () => {
   it('maps the itjobs codes', () => {
     expect(toWorkMode(0)).toBe('onsite')
@@ -101,6 +120,7 @@ describe('toJob', () => {
       workMode: 'hybrid',
       technologies: ['TypeScript', 'React'],
       junior: true,
+      area: 'frontend',
       publishedAt: '2026-10-17 14:05:00',
     })
   })

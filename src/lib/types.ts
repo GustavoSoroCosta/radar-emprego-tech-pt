@@ -1,5 +1,7 @@
 export type WorkMode = 'onsite' | 'hybrid' | 'remote'
 
+export type Area = 'frontend' | 'backend' | 'fullstack' | 'other'
+
 /** A job posting already reduced to the fields the dashboard needs. */
 export interface Job {
   id: number
@@ -9,5 +11,6 @@ export interface Job {
   workMode: WorkMode | null
   technologies: string[]
   junior: boolean
+  area: Area
   publishedAt: string // ISO date
 }

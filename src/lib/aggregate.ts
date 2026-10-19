@@ -35,13 +35,6 @@ export function countWorkModes(jobs: Job[]): CountItem[] {
   return countBy(jobs, (job) => [job.workMode ? WORK_MODE_LABELS[job.workMode] : 'Não indicado'])
 }
 
-const FRONTEND_TITLE = /front[- ]?end|react|angular|vue|\bui\b|web developer/i
-
-/** Frontend roles, judged by the title (the body of a backend role often mentions React too). */
-export function isFrontendJob(job: Job): boolean {
-  return FRONTEND_TITLE.test(job.title)
-}
-
 /** Share of `part` in `total` as a whole percentage, 0 when there is nothing to divide. */
 export function percent(part: number, total: number): number {
   return total === 0 ? 0 : Math.round((part / total) * 100)

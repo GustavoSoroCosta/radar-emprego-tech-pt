@@ -1,6 +1,6 @@
 import { BarChart } from '@/components/BarChart'
 import { StatCard } from '@/components/StatCard'
-import { countBy, countTechnologies, countWorkModes, isFrontendJob, percent } from '@/lib/aggregate'
+import { countBy, countTechnologies, countWorkModes, percent } from '@/lib/aggregate'
 import { getJobs } from '@/lib/jobs'
 
 // Rebuild the page at most once a day, matching the cache of the API calls.
@@ -10,7 +10,7 @@ export default async function Home() {
   const { jobs, source, error } = await getJobs()
 
   const total = jobs.length
-  const frontendJobs = jobs.filter(isFrontendJob)
+  const frontendJobs = jobs.filter((job) => job.area === 'frontend')
   const remote = jobs.filter((job) => job.workMode === 'remote').length
   const hybrid = jobs.filter((job) => job.workMode === 'hybrid').length
   const junior = jobs.filter((job) => job.junior).length
