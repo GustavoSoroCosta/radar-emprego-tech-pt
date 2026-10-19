@@ -44,13 +44,32 @@ export function BarChart({ title, data, labelHeader = 'Tecnologia', width = 560 
         className="w-full text-sm"
       >
         <desc id={`${id}-desc`}>{summary}</desc>
+        {/* Positions go through CSS (style) rather than SVG attributes so they can be transitioned
+            when the filters change; motion-safe turns the animation off for prefers-reduced-motion. */}
         {data.map((d) => (
-          <g key={d.label} transform={`translate(0, ${y(d.label)})`} aria-hidden="true">
+          <g
+            key={d.label}
+            style={{ transform: `translateY(${y(d.label)}px)` }}
+            className="motion-safe:transition-transform motion-safe:duration-500"
+            aria-hidden="true"
+          >
             <text x={MARGIN.left - 8} y={y.bandwidth() / 2} dy="0.35em" textAnchor="end" className="fill-current">
               {d.label}
             </text>
-            <rect x={MARGIN.left} width={x(d.count)} height={y.bandwidth()} rx={3} className="fill-violet-600" />
-            <text x={MARGIN.left + x(d.count) + 6} y={y.bandwidth() / 2} dy="0.35em" className="fill-current">
+            <rect
+              x={MARGIN.left}
+              height={y.bandwidth()}
+              rx={3}
+              style={{ width: x(d.count) }}
+              className="fill-violet-600 motion-safe:transition-[width] motion-safe:duration-500"
+            />
+            <text
+              x={MARGIN.left + 6}
+              y={y.bandwidth() / 2}
+              dy="0.35em"
+              style={{ transform: `translateX(${x(d.count)}px)` }}
+              className="fill-current motion-safe:transition-transform motion-safe:duration-500"
+            >
               {d.count}
             </text>
           </g>
