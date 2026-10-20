@@ -15,13 +15,15 @@ interface FilterBarProps {
   onChange: (filters: Filters) => void
 }
 
+// Same visible focus ring on every control; the browser default is hard to see on the dark background.
+const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500'
+
 const buttonClass =
-  'rounded-full border px-3 py-1.5 text-sm transition-colors focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 ' +
+  `rounded-full border px-3 py-1.5 text-sm transition-colors ${focusRing} ` +
   'border-zinc-300 hover:bg-zinc-100 aria-pressed:border-violet-600 aria-pressed:bg-violet-600 aria-pressed:text-white ' +
   'dark:border-zinc-700 dark:hover:bg-zinc-800 dark:aria-pressed:bg-violet-600'
 
-const selectClass =
-  'rounded-md border border-zinc-300 bg-transparent px-2 py-1.5 text-sm disabled:opacity-50 dark:border-zinc-700'
+const selectClass = `rounded-md border border-zinc-300 bg-transparent px-2 py-1.5 text-sm disabled:opacity-50 dark:border-zinc-700 ${focusRing}`
 
 /** Filter controls. Toggle buttons expose their state with aria-pressed; selects are native for free keyboard support. */
 export function FilterBar({ filters, cities, onChange }: FilterBarProps) {
@@ -60,6 +62,7 @@ export function FilterBar({ filters, cities, onChange }: FilterBarProps) {
         <label className="flex items-center gap-2 text-sm">
           Cidade
           <select
+            name="cidade"
             className={selectClass}
             value={filters.city ?? ''}
             disabled={filters.mine}
@@ -77,6 +80,7 @@ export function FilterBar({ filters, cities, onChange }: FilterBarProps) {
         <label className="flex items-center gap-2 text-sm">
           Regime
           <select
+            name="regime"
             className={selectClass}
             value={filters.workMode ?? ''}
             disabled={filters.mine}
@@ -94,7 +98,7 @@ export function FilterBar({ filters, cities, onChange }: FilterBarProps) {
         <button
           type="button"
           onClick={() => onChange(DEFAULT_FILTERS)}
-          className="text-sm text-zinc-600 underline hover:no-underline dark:text-zinc-400"
+          className={`text-sm text-zinc-600 underline hover:no-underline dark:text-zinc-400 ${focusRing}`}
         >
           Limpar filtros
         </button>

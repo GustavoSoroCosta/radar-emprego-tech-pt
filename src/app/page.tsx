@@ -31,7 +31,10 @@ export default async function Home() {
 
       <footer className="mt-12 border-t border-zinc-200 pt-4 text-sm text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
         Dados:{' '}
-        <a href="https://www.itjobs.pt" className="underline hover:no-underline">
+        <a
+          href="https://www.itjobs.pt"
+          className="underline hover:no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500"
+        >
           itjobs.pt
         </a>
         , atualizados uma vez por dia. Uma vaga pode contar em várias cidades e pedir várias tecnologias.
