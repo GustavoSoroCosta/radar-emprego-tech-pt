@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react'
 import { BarChart } from '@/components/BarChart'
 import { FilterBar } from '@/components/FilterBar'
 import { StatCard } from '@/components/StatCard'
-import { countBy, countTechnologies, countWorkModes, percent } from '@/lib/aggregate'
+import { countBy, countTechnologies, countWorkModes, jobsLabel, percent } from '@/lib/aggregate'
 import { applyFilters, filtersFromSearch, filtersToSearch, type Filters } from '@/lib/filters'
 import type { Job } from '@/lib/types'
 
@@ -47,7 +47,7 @@ export function DashboardView({ jobs, filters }: { jobs: Job[]; filters: Filters
   return (
     <>
       <p role="status" aria-live="polite" className="mb-6 text-sm text-zinc-600 dark:text-zinc-400">
-        A mostrar {total} {total === 1 ? 'vaga' : 'vagas'}
+        A mostrar {jobsLabel(total)}
         {areaName}
         {filters.mine && ' que encaixam nas minhas preferências'}.
       </p>
@@ -60,12 +60,12 @@ export function DashboardView({ jobs, filters }: { jobs: Job[]; filters: Filters
         <>
           <dl className="mb-12 grid grid-cols-2 gap-4 md:grid-cols-4">
             <StatCard label="Vagas" value={String(total)} />
-            <StatCard label="Remotas" value={`${percent(remote, total)}%`} detail={`${remote} vagas`} />
-            <StatCard label="Híbridas" value={`${percent(hybrid, total)}%`} detail={`${hybrid} vagas`} />
+            <StatCard label="Remotas" value={`${percent(remote, total)}%`} detail={jobsLabel(remote)} />
+            <StatCard label="Híbridas" value={`${percent(hybrid, total)}%`} detail={jobsLabel(hybrid)} />
             <StatCard
               label="Júnior"
               value={`${percent(junior, total)}%`}
-              detail={`${junior} vagas com júnior, estágio ou trainee no título`}
+              detail={`${jobsLabel(junior)} com júnior, estágio ou trainee no título`}
             />
           </dl>
 

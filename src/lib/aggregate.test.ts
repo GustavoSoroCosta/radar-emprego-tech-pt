@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { countBy, countTechnologies, countWorkModes, percent } from './aggregate'
+import { countBy, countTechnologies, countWorkModes, jobsLabel, percent } from './aggregate'
 import type { Job } from './types'
 
 const job = (overrides: Partial<Job> = {}): Job => ({
@@ -62,5 +62,13 @@ describe('percent', () => {
   it('rounds to a whole number and handles zero', () => {
     expect(percent(1, 3)).toBe(33)
     expect(percent(5, 0)).toBe(0)
+  })
+})
+
+describe('jobsLabel', () => {
+  it('uses the singular only for exactly one job', () => {
+    expect(jobsLabel(1)).toBe('1 vaga')
+    expect(jobsLabel(0)).toBe('0 vagas')
+    expect(jobsLabel(22)).toBe('22 vagas')
   })
 })
