@@ -57,7 +57,7 @@ export function FilterBar({ filters, cities, onChange }: FilterBarProps) {
           aria-pressed={filters.mine}
           onClick={() => set({ mine: !filters.mine })}
           className={buttonClass}
-          title="Presencial em Viana do Castelo, híbrido no Porto ou remoto"
+          aria-describedby="mine-hint"
         >
           ★ As minhas vagas
         </button>
@@ -106,6 +106,11 @@ export function FilterBar({ filters, cities, onChange }: FilterBarProps) {
           Limpar filtros
         </button>
       </div>
+
+      {/* Visible text instead of a title tooltip, which touch and keyboard users never see. */}
+      <p id="mine-hint" className="-mt-2 text-xs text-zinc-600 dark:text-zinc-400">
+        ★ As minhas vagas: os critérios do autor, presencial em Viana do Castelo, híbrido no Porto ou remoto.
+      </p>
     </div>
   )
 }
