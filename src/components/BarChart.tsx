@@ -16,8 +16,9 @@ const MARGIN = { top: 8, right: 40, bottom: 8, left: 110 }
 /**
  * Horizontal bar chart. D3 only computes the scales; React draws the SVG,
  * so the chart renders on the server and needs no client JavaScript.
- * Accessible: the SVG has a title and description, and a visually hidden
- * table repeats the same data for screen readers.
+ * Accessible: the title is an h2 so screen reader users can jump between charts,
+ * and a visually hidden table carries the data. The SVG itself is hidden from
+ * assistive tech so the numbers are not read twice.
  */
 export function BarChart({ title, data, labelHeader = 'Tecnologia', width = 560 }: BarChartProps) {
   const id = useId()
@@ -30,20 +31,14 @@ export function BarChart({ title, data, labelHeader = 'Tecnologia', width = 560 
     .range([MARGIN.top, height - MARGIN.bottom])
     .padding(0.25)
 
-  const summary = data.map((d) => `${d.label}: ${d.count}`).join(', ')
-
   return (
     <figure>
-      <figcaption id={`${id}-title`} className="mb-2 font-semibold">
-        {title}
+      <figcaption>
+        <h2 id={id} className="mb-2 font-semibold">
+          {title}
+        </h2>
       </figcaption>
-      <svg
-        viewBox={`0 0 ${width} ${height}`}
-        role="img"
-        aria-labelledby={`${id}-title ${id}-desc`}
-        className="w-full text-sm"
-      >
-        <desc id={`${id}-desc`}>{summary}</desc>
+      <svg viewBox={`0 0 ${width} ${height}`} aria-hidden="true" className="w-full text-sm">
         {/* Positions go through CSS (style) rather than SVG attributes so they can be transitioned
             when the filters change; motion-safe turns the animation off for prefers-reduced-motion. */}
         {data.map((d) => (
@@ -51,7 +46,6 @@ export function BarChart({ title, data, labelHeader = 'Tecnologia', width = 560 
             key={d.label}
             style={{ transform: `translateY(${y(d.label)}px)` }}
             className="motion-safe:transition-transform motion-safe:duration-500"
-            aria-hidden="true"
           >
             <text x={MARGIN.left - 8} y={y.bandwidth() / 2} dy="0.35em" textAnchor="end" className="fill-current">
               {d.label}
@@ -75,8 +69,7 @@ export function BarChart({ title, data, labelHeader = 'Tecnologia', width = 560 
           </g>
         ))}
       </svg>
-      <table className="sr-only">
-        <caption>{title}</caption>
+      <table aria-labelledby={id} className="sr-only">
         <thead>
           <tr>
             <th scope="col">{labelHeader}</th>

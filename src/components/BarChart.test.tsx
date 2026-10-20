@@ -8,11 +8,11 @@ const data = [
 ]
 
 describe('BarChart', () => {
-  it('exposes the chart as an image with an accessible name', () => {
+  it('gives the chart a level 2 heading and hides the drawing from screen readers', () => {
     render(<BarChart title="Tecnologias mais pedidas" data={data} />)
-    const chart = screen.getByRole('img')
-    expect(chart).toHaveAccessibleName(/Tecnologias mais pedidas/)
-    expect(chart).toHaveAccessibleName(/React: 5, Vue: 2/)
+    expect(screen.getByRole('heading', { level: 2, name: 'Tecnologias mais pedidas' })).toBeInTheDocument()
+    // The table already carries the numbers; exposing the SVG too would read them twice.
+    expect(screen.queryByRole('img')).not.toBeInTheDocument()
   })
 
   it('includes a table with the same data', () => {

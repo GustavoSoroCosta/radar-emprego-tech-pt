@@ -21,7 +21,10 @@ const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-
 const buttonClass =
   `rounded-full border px-3 py-1.5 text-sm transition-colors ${focusRing} ` +
   'border-zinc-300 hover:bg-zinc-100 aria-pressed:border-violet-600 aria-pressed:bg-violet-600 aria-pressed:text-white ' +
-  'dark:border-zinc-700 dark:hover:bg-zinc-800 dark:aria-pressed:bg-violet-600'
+  'dark:border-zinc-700 dark:hover:bg-zinc-800 dark:aria-pressed:bg-violet-600 ' +
+  // High contrast mode drops background colours, so the pressed state would vanish; use the system highlight instead.
+  'forced-colors:aria-pressed:forced-color-adjust-none forced-colors:aria-pressed:border-[Highlight] ' +
+  'forced-colors:aria-pressed:bg-[Highlight] forced-colors:aria-pressed:text-[HighlightText]'
 
 const selectClass = `rounded-md border border-zinc-300 bg-transparent px-2 py-1.5 text-sm disabled:opacity-50 dark:border-zinc-700 ${focusRing}`
 
