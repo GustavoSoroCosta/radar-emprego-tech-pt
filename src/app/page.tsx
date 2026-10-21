@@ -1,6 +1,7 @@
 import { Suspense } from 'react'
 import { Dashboard, DashboardView } from '@/components/Dashboard'
 import { Methodology } from '@/components/Methodology'
+import { RadarLogo } from '@/components/RadarLogo'
 import { DEFAULT_FILTERS } from '@/lib/filters'
 import { getJobs } from '@/lib/jobs'
 
@@ -20,15 +21,21 @@ export default async function Home() {
 
   return (
     <main className="mx-auto w-full max-w-5xl px-4 py-12">
-      <header className="mb-8">
-        <h1 className="text-3xl font-bold tracking-tight">Radar do Emprego Tech PT</h1>
-        <p className="mt-2 max-w-2xl text-zinc-600 dark:text-zinc-400">
+      <header className="mb-8 rounded-2xl border border-violet-100 bg-linear-to-br from-violet-50 to-white p-6 sm:p-8 dark:border-violet-950 dark:from-violet-950/60 dark:to-zinc-950">
+        <div className="flex items-center gap-3">
+          <RadarLogo className="size-10 shrink-0" />
+          <h1 className="text-3xl font-bold tracking-tight sm:text-4xl">Radar do Emprego Tech PT</h1>
+        </div>
+        <p className="mt-3 max-w-2xl text-zinc-600 dark:text-zinc-400">
           O que as empresas tech em Portugal estão a pedir nas vagas, com base nas ofertas publicadas no
           itjobs.pt.{source === 'sample' && ' Neste momento com dados de exemplo.'}
         </p>
         {source === 'itjobs' && (
-          <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
-            Dados de <time dateTime={fetchedAt.toISOString()}>{fetchedAtLabel}</time>, atualizados uma vez por dia.
+          <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs text-zinc-700 ring-1 ring-violet-200 dark:bg-zinc-900 dark:text-zinc-300 dark:ring-violet-900">
+            <span className="size-2 rounded-full bg-emerald-500" aria-hidden="true" />
+            <span>
+              Dados de <time dateTime={fetchedAt.toISOString()}>{fetchedAtLabel}</time>, atualizados uma vez por dia
+            </span>
           </p>
         )}
         {error && (
