@@ -89,33 +89,37 @@ function DashboardView({ jobs, filters }: { jobs: Job[]; filters: Filters }) {
         </p>
       ) : (
         <>
-          <dl className="mb-12 grid grid-cols-2 gap-4 md:grid-cols-4">
+          <dl className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
             <StatCard label="Vagas" value={String(total)} />
             <StatCard
               label="Remotas"
+              delay={60}
               value={`${percent(remote, total)}%`}
               share={percent(remote, total)}
               detail={jobsLabel(remote)}
             />
             <StatCard
               label="Híbridas"
+              delay={120}
               value={`${percent(hybrid, total)}%`}
               share={percent(hybrid, total)}
               detail={jobsLabel(hybrid)}
             />
             <StatCard
               label="Júnior"
+              delay={180}
               value={`${percent(junior, total)}%`}
               share={percent(junior, total)}
               detail={`${jobsLabel(junior)} com júnior, estágio ou trainee no título`}
             />
           </dl>
 
-          <div className="grid gap-12 md:grid-cols-2">
+          <div className="grid gap-6 md:grid-cols-2">
             <BarChart
               title={`Tecnologias mais pedidas nas vagas${areaName}`}
               data={countTechnologies(visible)}
               total={total}
+              delay={240}
             />
             {filters.area === 'all' && (
               <>
@@ -123,8 +127,15 @@ function DashboardView({ jobs, filters }: { jobs: Job[]; filters: Filters }) {
                   title="Tecnologias nas vagas de frontend"
                   data={countTechnologies(frontendJobs)}
                   total={frontendJobs.length}
+                  delay={320}
                 />
-                <BarChart title="Vagas por área" labelHeader="Área" data={countAreas(visible)} total={total} />
+                <BarChart
+                  title="Vagas por área"
+                  labelHeader="Área"
+                  data={countAreas(visible)}
+                  total={total}
+                  delay={400}
+                />
               </>
             )}
             <BarChart
@@ -132,12 +143,14 @@ function DashboardView({ jobs, filters }: { jobs: Job[]; filters: Filters }) {
               labelHeader="Cidade"
               data={countBy(visible, (job) => job.cities, 8)}
               total={total}
+              delay={480}
             />
             <BarChart
               title="Vagas por regime de trabalho"
               labelHeader="Regime"
               data={countWorkModes(visible)}
               total={total}
+              delay={560}
             />
           </div>
         </>

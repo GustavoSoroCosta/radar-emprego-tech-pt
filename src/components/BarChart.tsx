@@ -10,6 +10,8 @@ interface BarChartProps {
   total: number
   /** Header of the first column in the accessible table. */
   labelHeader?: string
+  /** Entrance delay in ms, so the cards on a page appear one after the other. */
+  delay?: number
 }
 
 const BAR_HEIGHT = 28
@@ -25,7 +27,7 @@ const DEFAULT_WIDTH = 400
  * and a visually hidden table carries the data. The SVG itself is hidden from
  * assistive tech so the numbers are not read twice.
  */
-export function BarChart({ title, data, total, labelHeader = 'Tecnologia' }: BarChartProps) {
+export function BarChart({ title, data, total, labelHeader = 'Tecnologia', delay = 0 }: BarChartProps) {
   const id = useId()
   const svgRef = useRef<SVGSVGElement>(null)
   const [measured, setMeasured] = useState(DEFAULT_WIDTH)
@@ -51,7 +53,10 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia' }: Bar
     .padding(0.25)
 
   return (
-    <figure className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/50">
+    <figure
+      style={{ animationDelay: `${delay}ms` }}
+      className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm motion-safe:animate-rise dark:border-zinc-800 dark:bg-zinc-900/50"
+    >
       <figcaption>
         <h2 id={id} className="font-semibold">
           {title}
@@ -81,10 +86,17 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia' }: Bar
               x={MARGIN.left}
               height={y.bandwidth()}
               rx={3}
-              style={{ width: x(d.count) }}
+              // On first paint each bar grows from the left, one row after the other; later
+              // filter changes animate the width instead.
+              style={{
+                width: x(d.count),
+                transformBox: 'fill-box',
+                transformOrigin: 'left',
+                animationDelay: `${delay + 150 + index * 40}ms`,
+              }}
               // The leader gets the darker shade, matching the sentence above the chart.
               // Both shades keep at least 3:1 against the card, in light and dark mode.
-              className={`motion-safe:transition-[width] motion-safe:duration-500 ${
+              className={`motion-safe:animate-grow motion-safe:transition-[width] motion-safe:duration-500 ${
                 index === 0 ? 'fill-violet-700 dark:fill-violet-300' : 'fill-violet-500'
               }`}
             />
@@ -92,8 +104,8 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia' }: Bar
               x={MARGIN.left + 6}
               y={y.bandwidth() / 2}
               dy="0.35em"
-              style={{ transform: `translateX(${x(d.count)}px)` }}
-              className="fill-current motion-safe:transition-transform motion-safe:duration-500"
+              style={{ transform: `translateX(${x(d.count)}px)`, animationDelay: `${delay + 500 + index * 40}ms` }}
+              className="fill-current motion-safe:animate-fade motion-safe:transition-transform motion-safe:duration-500"
             >
               {shareLabel(d.count, total)}
             </text>
