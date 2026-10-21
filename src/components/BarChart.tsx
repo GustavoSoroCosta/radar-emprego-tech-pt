@@ -1,7 +1,7 @@
 import { scaleBand, scaleLinear } from 'd3'
 import { useId } from 'react'
 import { jobsLabel, type CountItem } from '@/lib/aggregate'
-import { shareLabel, SMALL_SAMPLE } from '@/lib/insights'
+import { shareLabel, SMALL_SAMPLE, topInsight } from '@/lib/insights'
 
 interface BarChartProps {
   title: string
@@ -27,6 +27,7 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia', width
   const id = useId()
   const height = MARGIN.top + MARGIN.bottom + data.length * BAR_HEIGHT
   const max = Math.max(0, ...data.map((d) => d.count))
+  const insight = topInsight(data, total)
 
   const x = scaleLinear().domain([0, max]).range([0, width - MARGIN.left - MARGIN.right])
   const y = scaleBand<string>()
@@ -40,6 +41,8 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia', width
         <h2 id={id} className="font-semibold">
           {title}
         </h2>
+        {/* The takeaway in words, as data journalism does, so the reader does not have to work it out. */}
+        {insight && <p className="mt-1 text-sm">{insight}</p>}
         <p className="mb-2 text-xs text-zinc-600 dark:text-zinc-400">
           Base: {jobsLabel(total)}.
           {total < SMALL_SAMPLE && (

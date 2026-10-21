@@ -23,6 +23,11 @@ describe('BarChart', () => {
     expect(react).toHaveTextContent('5')
   })
 
+  it('shows the takeaway sentence under the title', () => {
+    render(<BarChart title="T" data={data} total={10} />)
+    expect(screen.getByText('React lidera, em 50% das vagas. Em segundo lugar: Vue (20%).')).toBeInTheDocument()
+  })
+
   it('states the base and warns when the sample is small', () => {
     const { rerender } = render(<BarChart title="T" data={data} total={10} />)
     expect(screen.getByText(/Base: 10 vagas/)).toBeInTheDocument()

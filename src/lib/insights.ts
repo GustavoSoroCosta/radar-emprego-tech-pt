@@ -11,7 +11,8 @@ export function shareLabel(count: number, total: number): string {
 
 /**
  * The main takeaway of a ranking in one sentence, like the headline of a news chart:
- * "SQL lidera, em 29% das vagas, à frente de Azure (25%)."
+ * "SQL lidera, em 29% das vagas. Em segundo lugar: Azure (25%)."
+ * The runner-up goes after a colon so no article is needed ("do Porto" vs "de Lisboa").
  */
 export function topInsight(items: CountItem[], total: number): string | null {
   const [first, second] = items
@@ -22,5 +23,5 @@ export function topInsight(items: CountItem[], total: number): string | null {
     return `${first.label} e ${second.label} empatam, cada um em ${share(first)} das vagas.`
   }
   const lead = `${first.label} lidera, em ${share(first)} das vagas`
-  return second ? `${lead}, à frente de ${second.label} (${share(second)}).` : `${lead}.`
+  return second ? `${lead}. Em segundo lugar: ${second.label} (${share(second)}).` : `${lead}.`
 }

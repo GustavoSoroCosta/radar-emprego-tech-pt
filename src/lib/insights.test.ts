@@ -18,7 +18,7 @@ describe('topInsight', () => {
       { label: 'SQL', count: 233 },
       { label: 'Azure', count: 203 },
     ]
-    expect(topInsight(items, 804)).toBe('SQL lidera, em 29% das vagas, à frente de Azure (25%).')
+    expect(topInsight(items, 804)).toBe('SQL lidera, em 29% das vagas. Em segundo lugar: Azure (25%).')
   })
 
   it('reports a tie instead of picking a leader', () => {
