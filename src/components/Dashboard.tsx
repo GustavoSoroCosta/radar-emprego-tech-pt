@@ -90,25 +90,28 @@ function DashboardView({ jobs, filters }: { jobs: Job[]; filters: Filters }) {
       ) : (
         <>
           <dl className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-            <StatCard label="Vagas" value={String(total)} />
+            <StatCard label="Vagas" value={total} />
             <StatCard
               label="Remotas"
               delay={60}
-              value={`${percent(remote, total)}%`}
+              value={percent(remote, total)}
+              suffix="%"
               share={percent(remote, total)}
               detail={jobsLabel(remote)}
             />
             <StatCard
               label="Híbridas"
               delay={120}
-              value={`${percent(hybrid, total)}%`}
+              value={percent(hybrid, total)}
+              suffix="%"
               share={percent(hybrid, total)}
               detail={jobsLabel(hybrid)}
             />
             <StatCard
               label="Júnior"
               delay={180}
-              value={`${percent(junior, total)}%`}
+              value={percent(junior, total)}
+              suffix="%"
               share={percent(junior, total)}
               detail={`${jobsLabel(junior)} com júnior, estágio ou trainee no título`}
             />
