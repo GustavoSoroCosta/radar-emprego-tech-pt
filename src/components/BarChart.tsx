@@ -1,10 +1,13 @@
 import { scaleBand, scaleLinear } from 'd3'
 import { useId } from 'react'
-import type { CountItem } from '@/lib/aggregate'
+import { jobsLabel, type CountItem } from '@/lib/aggregate'
+import { shareLabel, SMALL_SAMPLE } from '@/lib/insights'
 
 interface BarChartProps {
   title: string
   data: CountItem[]
+  /** Number of jobs the counts come from; bars show their share of it. */
+  total: number
   /** Header of the first column in the accessible table. */
   labelHeader?: string
   width?: number
@@ -20,7 +23,7 @@ const MARGIN = { top: 8, right: 40, bottom: 8, left: 110 }
  * and a visually hidden table carries the data. The SVG itself is hidden from
  * assistive tech so the numbers are not read twice.
  */
-export function BarChart({ title, data, labelHeader = 'Tecnologia', width = 560 }: BarChartProps) {
+export function BarChart({ title, data, total, labelHeader = 'Tecnologia', width = 560 }: BarChartProps) {
   const id = useId()
   const height = MARGIN.top + MARGIN.bottom + data.length * BAR_HEIGHT
   const max = Math.max(0, ...data.map((d) => d.count))
@@ -34,9 +37,15 @@ export function BarChart({ title, data, labelHeader = 'Tecnologia', width = 560 
   return (
     <figure>
       <figcaption>
-        <h2 id={id} className="mb-2 font-semibold">
+        <h2 id={id} className="font-semibold">
           {title}
         </h2>
+        <p className="mb-2 text-xs text-zinc-600 dark:text-zinc-400">
+          Base: {jobsLabel(total)}.
+          {total < SMALL_SAMPLE && (
+            <span className="text-amber-700 dark:text-amber-400"> Amostra pequena, ler com cautela.</span>
+          )}
+        </p>
       </figcaption>
       <svg viewBox={`0 0 ${width} ${height}`} aria-hidden="true" className="w-full text-sm">
         {/* Positions go through CSS (style) rather than SVG attributes so they can be transitioned
@@ -64,7 +73,7 @@ export function BarChart({ title, data, labelHeader = 'Tecnologia', width = 560 
               style={{ transform: `translateX(${x(d.count)}px)` }}
               className="fill-current motion-safe:transition-transform motion-safe:duration-500"
             >
-              {d.count}
+              {shareLabel(d.count, total)}
             </text>
           </g>
         ))}
@@ -73,6 +82,7 @@ export function BarChart({ title, data, labelHeader = 'Tecnologia', width = 560 
         <thead>
           <tr>
             <th scope="col">{labelHeader}</th>
+            <th scope="col">% das vagas</th>
             <th scope="col">Vagas</th>
           </tr>
         </thead>
@@ -80,6 +90,7 @@ export function BarChart({ title, data, labelHeader = 'Tecnologia', width = 560 
           {data.map((d) => (
             <tr key={d.label}>
               <th scope="row">{d.label}</th>
+              <td>{shareLabel(d.count, total)}</td>
               <td>{d.count}</td>
             </tr>
           ))}

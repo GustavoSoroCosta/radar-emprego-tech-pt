@@ -42,6 +42,7 @@ export function DashboardView({ jobs, filters }: { jobs: Job[]; filters: Filters
   const remote = visible.filter((job) => job.workMode === 'remote').length
   const hybrid = visible.filter((job) => job.workMode === 'hybrid').length
   const junior = visible.filter((job) => job.junior).length
+  const frontendJobs = visible.filter((job) => job.area === 'frontend')
   const areaName = AREA_NAMES[filters.area]
 
   return (
@@ -70,15 +71,30 @@ export function DashboardView({ jobs, filters }: { jobs: Job[]; filters: Filters
           </dl>
 
           <div className="grid gap-12 md:grid-cols-2">
-            <BarChart title={`Tecnologias mais pedidas nas vagas${areaName}`} data={countTechnologies(visible)} />
+            <BarChart
+              title={`Tecnologias mais pedidas nas vagas${areaName}`}
+              data={countTechnologies(visible)}
+              total={total}
+            />
             {filters.area === 'all' && (
               <BarChart
                 title="Tecnologias nas vagas de frontend"
-                data={countTechnologies(visible.filter((job) => job.area === 'frontend'))}
+                data={countTechnologies(frontendJobs)}
+                total={frontendJobs.length}
               />
             )}
-            <BarChart title="Vagas por cidade" labelHeader="Cidade" data={countBy(visible, (job) => job.cities, 8)} />
-            <BarChart title="Vagas por regime de trabalho" labelHeader="Regime" data={countWorkModes(visible)} />
+            <BarChart
+              title="Vagas por cidade"
+              labelHeader="Cidade"
+              data={countBy(visible, (job) => job.cities, 8)}
+              total={total}
+            />
+            <BarChart
+              title="Vagas por regime de trabalho"
+              labelHeader="Regime"
+              data={countWorkModes(visible)}
+              total={total}
+            />
           </div>
         </>
       )}
