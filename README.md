@@ -1,5 +1,7 @@
 # Radar do Emprego Tech PT
 
+**Live:** [radar-emprego-tech-pt.vercel.app](https://radar-emprego-tech-pt.vercel.app)
+
 A dashboard that shows what tech companies in Portugal are asking for in their job ads:
 the most requested technologies, which areas are hiring, where the jobs are and how much of the work is
 remote, hybrid or on-site. It uses real, daily-updated data from the [itjobs.pt](https://www.itjobs.pt) API.
