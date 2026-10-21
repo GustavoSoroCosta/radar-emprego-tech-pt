@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { countBy, countTechnologies, countWorkModes, jobsLabel, percent } from './aggregate'
+import { countAreas, countBy, countTechnologies, countWorkModes, jobsLabel, percent } from './aggregate'
 import type { Job } from './types'
 
 const job = (overrides: Partial<Job> = {}): Job => ({
@@ -70,5 +70,15 @@ describe('jobsLabel', () => {
     expect(jobsLabel(1)).toBe('1 vaga')
     expect(jobsLabel(0)).toBe('0 vagas')
     expect(jobsLabel(22)).toBe('22 vagas')
+  })
+})
+
+describe('countAreas', () => {
+  it('counts jobs per area with readable labels', () => {
+    const jobs = [job({ area: 'data' }), job({ area: 'data' }), job({ area: 'other' })]
+    expect(countAreas(jobs)).toEqual([
+      { label: 'Dados e IA', count: 2 },
+      { label: 'Outras', count: 1 },
+    ])
   })
 })

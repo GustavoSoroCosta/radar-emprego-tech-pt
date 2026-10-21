@@ -5,7 +5,7 @@ import { useMemo, useState } from 'react'
 import { BarChart } from '@/components/BarChart'
 import { FilterBar } from '@/components/FilterBar'
 import { StatCard } from '@/components/StatCard'
-import { countBy, countTechnologies, countWorkModes, jobsLabel, percent } from '@/lib/aggregate'
+import { countAreas, countBy, countTechnologies, countWorkModes, jobsLabel, percent } from '@/lib/aggregate'
 import { applyFilters, filtersFromSearch, filtersToSearch, type AreaFilter, type Filters } from '@/lib/filters'
 import type { Job } from '@/lib/types'
 
@@ -88,11 +88,14 @@ export function DashboardView({ jobs, filters }: { jobs: Job[]; filters: Filters
               total={total}
             />
             {filters.area === 'all' && (
-              <BarChart
-                title="Tecnologias nas vagas de frontend"
-                data={countTechnologies(frontendJobs)}
-                total={frontendJobs.length}
-              />
+              <>
+                <BarChart
+                  title="Tecnologias nas vagas de frontend"
+                  data={countTechnologies(frontendJobs)}
+                  total={frontendJobs.length}
+                />
+                <BarChart title="Vagas por área" labelHeader="Área" data={countAreas(visible)} total={total} />
+              </>
             )}
             <BarChart
               title="Vagas por cidade"

@@ -1,12 +1,10 @@
-import { WORK_MODE_LABELS } from '@/lib/aggregate'
+import { AREA_LABELS, WORK_MODE_LABELS } from '@/lib/aggregate'
 import { DEFAULT_FILTERS, type AreaFilter, type Filters } from '@/lib/filters'
-import type { WorkMode } from '@/lib/types'
+import type { Area, WorkMode } from '@/lib/types'
 
 const AREA_OPTIONS: { value: AreaFilter; label: string }[] = [
   { value: 'all', label: 'Todas' },
-  { value: 'frontend', label: 'Frontend' },
-  { value: 'backend', label: 'Backend' },
-  { value: 'fullstack', label: 'Fullstack' },
+  ...(Object.entries(AREA_LABELS) as [Area, string][]).map(([value, label]) => ({ value, label })),
 ]
 
 interface FilterBarProps {

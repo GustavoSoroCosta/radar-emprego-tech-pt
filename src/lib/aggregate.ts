@@ -1,4 +1,4 @@
-import type { Job, WorkMode } from './types'
+import type { Area, Job, WorkMode } from './types'
 
 export interface CountItem {
   label: string
@@ -29,6 +29,22 @@ export const WORK_MODE_LABELS: Record<WorkMode, string> = {
   onsite: 'Presencial',
   hybrid: 'Híbrido',
   remote: 'Remoto',
+}
+
+// Order used by the filter buttons: the developer areas first, "Outras" last.
+export const AREA_LABELS: Record<Area, string> = {
+  frontend: 'Frontend',
+  backend: 'Backend',
+  fullstack: 'Fullstack',
+  mobile: 'Mobile',
+  data: 'Dados e IA',
+  devops: 'DevOps e cloud',
+  qa: 'QA e testes',
+  other: 'Outras',
+}
+
+export function countAreas(jobs: Job[]): CountItem[] {
+  return countBy(jobs, (job) => [AREA_LABELS[job.area]])
 }
 
 export function countWorkModes(jobs: Job[]): CountItem[] {

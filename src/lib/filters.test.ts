@@ -67,6 +67,11 @@ describe('URL round trip', () => {
     expect(filtersFromSearch(new URLSearchParams(search))).toEqual(f)
   })
 
+  it('accepts the new areas, including "other", from the URL', () => {
+    expect(filtersFromSearch(new URLSearchParams('?area=data')).area).toBe('data')
+    expect(filtersFromSearch(new URLSearchParams('?area=other')).area).toBe('other')
+  })
+
   it('ignores invalid values coming from the URL', () => {
     expect(filtersFromSearch(new URLSearchParams('?area=hacker&regime=lua&minhas=sim'))).toEqual(DEFAULT_FILTERS)
   })
