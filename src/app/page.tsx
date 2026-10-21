@@ -1,8 +1,6 @@
-import { Suspense } from 'react'
-import { Dashboard, DashboardView } from '@/components/Dashboard'
+import { Dashboard } from '@/components/Dashboard'
 import { Methodology } from '@/components/Methodology'
 import { RadarLogo } from '@/components/RadarLogo'
-import { DEFAULT_FILTERS } from '@/lib/filters'
 import { getJobs } from '@/lib/jobs'
 
 // Rebuild the page at most once a day, matching the cache of the API calls.
@@ -45,10 +43,8 @@ export default async function Home() {
         )}
       </header>
 
-      {/* The fallback is the full, unfiltered dashboard, so the page is complete before React loads. */}
-      <Suspense fallback={<DashboardView jobs={jobs} filters={DEFAULT_FILTERS} />}>
-        <Dashboard jobs={jobs} />
-      </Suspense>
+      {/* Rendered on the server with the default filters, so the page is complete before React loads. */}
+      <Dashboard jobs={jobs} />
 
       <Methodology />
 

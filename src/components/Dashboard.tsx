@@ -1,7 +1,6 @@
 'use client'
 
-import { useSearchParams } from 'next/navigation'
-import { useMemo, useState } from 'react'
+import { useMemo, useSyncExternalStore } from 'react'
 import { BarChart } from '@/components/BarChart'
 import { FilterBar } from '@/components/FilterBar'
 import { StatCard } from '@/components/StatCard'
@@ -22,18 +21,39 @@ const AREA_NAMES: Record<AreaFilter, string> = {
   other: ' de outras áreas',
 }
 
-/** Interactive dashboard: filters live in React state and are mirrored in the URL so a view can be shared. */
+// The URL is the single source of truth for the filters. history.replaceState fires no event,
+// so the dashboard announces its own changes with this one.
+const URL_CHANGE = 'radar:url-change'
+
+function subscribeToUrl(onChange: () => void) {
+  window.addEventListener('popstate', onChange)
+  window.addEventListener(URL_CHANGE, onChange)
+  return () => {
+    window.removeEventListener('popstate', onChange)
+    window.removeEventListener(URL_CHANGE, onChange)
+  }
+}
+
+/**
+ * Interactive dashboard: filters are read from the URL, so a view can be shared as a link.
+ * The server has no URL query (the page is static), so it renders the default filters and the
+ * browser hydrates that same markup before applying the query. One tree, rendered once, which
+ * keeps the entrance animations from restarting.
+ */
 export function Dashboard({ jobs }: { jobs: Job[] }) {
-  const searchParams = useSearchParams()
-  const [filters, setFilters] = useState(() => filtersFromSearch(new URLSearchParams(searchParams.toString())))
+  const search = useSyncExternalStore(
+    subscribeToUrl,
+    () => window.location.search,
+    () => '',
+  )
+  const filters = useMemo(() => filtersFromSearch(new URLSearchParams(search)), [search])
 
   // Top cities are worked out once from all jobs, so the list does not jump around while filtering.
   const cities = useMemo(() => countBy(jobs, (job) => job.cities, 12).map((c) => c.label), [jobs])
 
   function changeFilters(next: Filters) {
-    setFilters(next)
-    // Next.js keeps useSearchParams in sync with history.replaceState, without a server round trip.
     window.history.replaceState(null, '', `${window.location.pathname}${filtersToSearch(next)}`)
+    window.dispatchEvent(new Event(URL_CHANGE))
   }
 
   return (
@@ -44,10 +64,9 @@ export function Dashboard({ jobs }: { jobs: Job[] }) {
   )
 }
 
-/** The charts for a given set of filters. No hooks, so the server can also render it as the fallback. */
-export function DashboardView({ jobs, filters }: { jobs: Job[]; filters: Filters }) {
-  // Filtering ~800 jobs takes well under a millisecond, so there is no need to memoise it,
-  // and keeping this component free of hooks lets the server render it as the fallback.
+/** The numbers and charts for a given set of filters. */
+function DashboardView({ jobs, filters }: { jobs: Job[]; filters: Filters }) {
+  // Filtering ~800 jobs takes well under a millisecond, so there is no need to memoise it.
   const visible = applyFilters(jobs, filters)
   const total = visible.length
   const remote = visible.filter((job) => job.workMode === 'remote').length
