@@ -62,16 +62,44 @@ export function isJunior(title: string): boolean {
   return JUNIOR.test(title)
 }
 
-// Judged by the title only: the body of a backend role often mentions React too.
-// Fullstack is checked first because "Fullstack Java + React" would otherwise look frontend.
-const FULLSTACK_TITLE = /full[- ]?stack/i
-const FRONTEND_TITLE = /front[- ]?end|react|angular|vue|\bui\b|web developer/i
-const BACKEND_TITLE = /back[- ]?end|\bjava\b(?!\s*script)|\.net|\bc#|node|\bphp\b|python|golang|ruby/i
+const FRONT_FRAMEWORK = /react|angular|vue/i
+const BACK_LANGUAGE = /\bjava\b(?!\s*script)|\.net|\bc#|node|\bphp\b|python|golang|ruby/i
 
-export function classifyArea(title: string): Area {
-  if (FULLSTACK_TITLE.test(title)) return 'fullstack'
-  if (FRONTEND_TITLE.test(title)) return 'frontend'
-  if (BACKEND_TITLE.test(title)) return 'backend'
+// The title decides, in this order, because the first match wins: "React Native" is mobile
+// before it is frontend, "Python Data Engineer" is data before it is backend, and
+// "Java/Angular Developer" names both sides, so it is fullstack.
+const AREA_BY_TITLE: [Area, (title: string) => boolean][] = [
+  // Closed platforms and design roles have their own skill set; their bodies often mention
+  // Angular or Java (ServiceNow, SAP Fiori...), which would otherwise pull them into an area.
+  ['other', (t) => /\bsap\b|salesforce|service\s?now|outsystems|mulesoft|tibco|cobol|\brpa\b|designer|\bux\b/i.test(t)],
+  ['fullstack', (t) => /full[- ]?stack/i.test(t)],
+  ['mobile', (t) => /mobile|android|\bios\b|flutter|react\s*native|\bswift\b/i.test(t)],
+  ['frontend', (t) => /front[- ]?end|\bui\b|web developer/i.test(t)],
+  ['backend', (t) => /back[- ]?end/i.test(t)],
+  ['qa', (t) => /\bqae?\b|\btest(?:er|ing)?\b|quality/i.test(t)],
+  ['data', (t) => /\bdata\b|dados|analytics|\bbi\b|machine learning|\b(?:ai|ia|ml)\b|intelig[eê]ncia artificial|\bdba\b/i.test(t)],
+  ['devops', (t) => /devops|devsecops|\bsre\b|site reliability|cloud|platform|kubernetes|finops/i.test(t)],
+  ['fullstack', (t) => FRONT_FRAMEWORK.test(t) && BACK_LANGUAGE.test(t)],
+  ['frontend', (t) => FRONT_FRAMEWORK.test(t)],
+  ['backend', (t) => BACK_LANGUAGE.test(t)],
+]
+
+// Titles like "Software Engineer" say nothing about the area, so the technologies decide.
+// Only frameworks and server languages count: plain JavaScript or SQL show up in every kind of job.
+const GENERIC_DEV_TITLE = /developer|programador|desenvolvedor|software engineer|engenheiro de software/i
+const FRONTEND_TECH = new Set(['React', 'Angular', 'Vue', 'Next.js'])
+const BACKEND_TECH = new Set(['Java', 'Spring', 'C#', '.NET', 'Node.js', 'Python', 'PHP', 'Go'])
+
+export function classifyArea(title: string, technologies: string[] = []): Area {
+  const byTitle = AREA_BY_TITLE.find(([, matches]) => matches(title))
+  if (byTitle) return byTitle[0]
+  if (!GENERIC_DEV_TITLE.test(title)) return 'other'
+
+  const front = technologies.some((t) => FRONTEND_TECH.has(t))
+  const back = technologies.some((t) => BACKEND_TECH.has(t))
+  if (front && back) return 'fullstack'
+  if (front) return 'frontend'
+  if (back) return 'backend'
   return 'other'
 }
 
@@ -87,15 +115,16 @@ export function htmlToText(html: string): string {
 }
 
 export function toJob(raw: ItjobsJob): Job {
+  const technologies = extractTechnologies(`${raw.title} ${htmlToText(raw.body ?? '')}`)
   return {
     id: raw.id,
     title: raw.title,
     company: raw.company?.name ?? '',
     cities: (raw.locations ?? []).map((l) => l.name),
     workMode: toWorkMode(raw.workModel),
-    technologies: extractTechnologies(`${raw.title} ${htmlToText(raw.body ?? '')}`),
+    technologies,
     junior: isJunior(raw.title),
-    area: classifyArea(raw.title),
+    area: classifyArea(raw.title, technologies),
     publishedAt: raw.publishedAt,
   }
 }

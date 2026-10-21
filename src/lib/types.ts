@@ -1,6 +1,6 @@
 export type WorkMode = 'onsite' | 'hybrid' | 'remote'
 
-export type Area = 'frontend' | 'backend' | 'fullstack' | 'other'
+export type Area = 'frontend' | 'backend' | 'fullstack' | 'mobile' | 'data' | 'devops' | 'qa' | 'other'
 
 /** A job posting already reduced to the fields the dashboard needs. */
 export interface Job {

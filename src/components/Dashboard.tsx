@@ -6,10 +6,21 @@ import { BarChart } from '@/components/BarChart'
 import { FilterBar } from '@/components/FilterBar'
 import { StatCard } from '@/components/StatCard'
 import { countBy, countTechnologies, countWorkModes, jobsLabel, percent } from '@/lib/aggregate'
-import { applyFilters, filtersFromSearch, filtersToSearch, type Filters } from '@/lib/filters'
+import { applyFilters, filtersFromSearch, filtersToSearch, type AreaFilter, type Filters } from '@/lib/filters'
 import type { Job } from '@/lib/types'
 
-const AREA_NAMES = { all: '', frontend: ' de frontend', backend: ' de backend', fullstack: ' fullstack' }
+// How each area reads inside a sentence: "A mostrar 20 vagas de frontend".
+const AREA_NAMES: Record<AreaFilter, string> = {
+  all: '',
+  frontend: ' de frontend',
+  backend: ' de backend',
+  fullstack: ' fullstack',
+  mobile: ' de mobile',
+  data: ' de dados e IA',
+  devops: ' de DevOps e cloud',
+  qa: ' de QA e testes',
+  other: ' de outras áreas',
+}
 
 /** Interactive dashboard: filters live in React state and are mirrored in the URL so a view can be shared. */
 export function Dashboard({ jobs }: { jobs: Job[] }) {

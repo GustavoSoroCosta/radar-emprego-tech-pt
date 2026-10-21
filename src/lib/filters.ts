@@ -1,6 +1,6 @@
 import type { Area, Job, WorkMode } from './types'
 
-export type AreaFilter = Exclude<Area, 'other'> | 'all'
+export type AreaFilter = Area | 'all'
 
 export interface Filters {
   area: AreaFilter
@@ -12,7 +12,7 @@ export interface Filters {
 
 export const DEFAULT_FILTERS: Filters = { area: 'all', city: null, workMode: null, mine: false }
 
-const AREAS: AreaFilter[] = ['all', 'frontend', 'backend', 'fullstack']
+const AREAS: AreaFilter[] = ['all', 'frontend', 'backend', 'fullstack', 'mobile', 'data', 'devops', 'qa', 'other']
 
 // Portuguese slugs in the URL, so a shared link reads naturally (?regime=hibrido).
 const WORK_MODE_SLUGS: Record<WorkMode, string> = { onsite: 'presencial', hybrid: 'hibrido', remote: 'remoto' }

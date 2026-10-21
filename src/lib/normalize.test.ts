@@ -74,11 +74,37 @@ describe('classifyArea', () => {
     ['Java Back-End Developer', 'backend'],
     ['.NET Developer', 'backend'],
     ['Python Developer', 'backend'],
+    ['Senior React Native Developer', 'mobile'],
+    ['iOS Developer', 'mobile'],
+    ['Python Data Engineer', 'data'],
+    ['Junior SQL DBA', 'data'],
+    ['QA Automation Engineer', 'qa'],
+    ['DevOps Engineer', 'devops'],
+    ['Cloud Engineer (Azure)', 'devops'],
+    ['Backend Developer (Cloud)', 'backend'],
+    ['Java/Angular Developer', 'fullstack'],
+    ['.NET/React Developer', 'fullstack'],
+    ['Frontend React Developer (w/Python)', 'frontend'],
     ['JavaScript Engineer', 'other'],
-    ['Data Engineer', 'other'],
+    ['SAP ABAP Developer', 'other'],
+    ['SAP Full-Stack Developer', 'other'],
+    ['UI/UX Lead', 'other'],
     ['Build Engineer', 'other'],
-  ])('classifies "%s" as %s', (title, area) => {
+  ])('classifies "%s" by its title as %s', (title, area) => {
     expect(classifyArea(title)).toBe(area)
+  })
+
+  it('uses the technologies when the title is a generic developer title', () => {
+    expect(classifyArea('Software Engineer', ['React', 'TypeScript'])).toBe('frontend')
+    expect(classifyArea('Software Engineer', ['Java', 'Spring', 'SQL'])).toBe('backend')
+    expect(classifyArea('Senior Software Engineer', ['React', 'C#', 'SQL'])).toBe('fullstack')
+    // JavaScript and SQL alone appear in every kind of job, so they decide nothing.
+    expect(classifyArea('Web Services Developer', ['JavaScript', 'HTML', 'SQL'])).toBe('other')
+    expect(classifyArea('ServiceNow Developer', ['JavaScript', 'Angular'])).toBe('other')
+  })
+
+  it('does not let technologies override a non-developer title', () => {
+    expect(classifyArea('Business Analyst', ['Java', 'React'])).toBe('other')
   })
 })
 
