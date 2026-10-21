@@ -31,6 +31,7 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia', delay
   const id = useId()
   const svgRef = useRef<SVGSVGElement>(null)
   const [measured, setMeasured] = useState(DEFAULT_WIDTH)
+  const [hovered, setHovered] = useState<number | null>(null)
 
   useEffect(() => {
     const svg = svgRef.current
@@ -55,7 +56,7 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia', delay
   return (
     <figure
       style={{ animationDelay: `${delay}ms` }}
-      className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm motion-safe:animate-rise dark:border-zinc-800 dark:bg-zinc-900/50"
+      className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md motion-safe:animate-rise motion-safe:transition motion-safe:hover:-translate-y-0.5 dark:border-zinc-800 dark:bg-zinc-900/50"
     >
       <figcaption>
         <h2 id={id} className="font-semibold">
@@ -70,48 +71,73 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia', delay
           )}
         </p>
       </figcaption>
-      <svg ref={svgRef} viewBox={`0 0 ${width} ${height}`} aria-hidden="true" className="w-full text-sm">
-        {/* Positions go through CSS (style) rather than SVG attributes so they can be transitioned
+      {/* Hovering a row dims the others and shows its job count. Mouse only: the same numbers are
+          in the table for screen readers, so this adds no information that is missing elsewhere. */}
+      <div className="relative" onMouseLeave={() => setHovered(null)}>
+        <svg ref={svgRef} viewBox={`0 0 ${width} ${height}`} aria-hidden="true" className="w-full text-sm">
+          {/* Positions go through CSS (style) rather than SVG attributes so they can be transitioned
             when the filters change; motion-safe turns the animation off for prefers-reduced-motion. */}
-        {data.map((d, index) => (
-          <g
-            key={d.label}
-            style={{ transform: `translateY(${y(d.label)}px)` }}
-            className="motion-safe:transition-transform motion-safe:duration-500"
-          >
-            <text x={MARGIN.left - 8} y={y.bandwidth() / 2} dy="0.35em" textAnchor="end" className="fill-current">
-              {d.label}
-            </text>
-            <rect
-              x={MARGIN.left}
-              height={y.bandwidth()}
-              rx={3}
-              // On first paint each bar grows from the left, one row after the other; later
-              // filter changes animate the width instead.
-              style={{
-                width: x(d.count),
-                transformBox: 'fill-box',
-                transformOrigin: 'left',
-                animationDelay: `${delay + 150 + index * 40}ms`,
-              }}
-              // The leader gets the darker shade, matching the sentence above the chart.
-              // Both shades keep at least 3:1 against the card, in light and dark mode.
-              className={`motion-safe:animate-grow motion-safe:transition-[width] motion-safe:duration-500 ${
-                index === 0 ? 'fill-violet-700 dark:fill-violet-300' : 'fill-violet-500'
+          {data.map((d, index) => (
+            <g
+              key={d.label}
+              style={{ transform: `translateY(${y(d.label)}px)` }}
+              onMouseEnter={() => setHovered(index)}
+              className={`transition-opacity motion-safe:transition-[transform,opacity] motion-safe:duration-500 ${
+                hovered !== null && hovered !== index ? 'opacity-40' : ''
               }`}
-            />
-            <text
-              x={MARGIN.left + 6}
-              y={y.bandwidth() / 2}
-              dy="0.35em"
-              style={{ transform: `translateX(${x(d.count)}px)`, animationDelay: `${delay + 500 + index * 40}ms` }}
-              className="fill-current motion-safe:animate-fade motion-safe:transition-transform motion-safe:duration-500"
             >
-              {shareLabel(d.count, total)}
-            </text>
-          </g>
-        ))}
-      </svg>
+              {/* Invisible hit area across the whole row, so the gaps between bars do not flicker. */}
+              <rect width={width} height={BAR_HEIGHT} y={-(BAR_HEIGHT - y.bandwidth()) / 2} fill="transparent" />
+              <text x={MARGIN.left - 8} y={y.bandwidth() / 2} dy="0.35em" textAnchor="end" className="fill-current">
+                {d.label}
+              </text>
+              <rect
+                x={MARGIN.left}
+                height={y.bandwidth()}
+                rx={3}
+                // On first paint each bar grows from the left, one row after the other; later
+                // filter changes animate the width instead.
+                style={{
+                  width: x(d.count),
+                  transformBox: 'fill-box',
+                  transformOrigin: 'left',
+                  animationDelay: `${delay + 150 + index * 40}ms`,
+                }}
+                // The leader gets the darker shade, matching the sentence above the chart.
+                // Both shades keep at least 3:1 against the card, in light and dark mode.
+                className={`motion-safe:animate-grow motion-safe:transition-[width] motion-safe:duration-500 ${
+                  index === 0 ? 'fill-violet-700 dark:fill-violet-300' : 'fill-violet-500'
+                }`}
+              />
+              <text
+                x={MARGIN.left + 6}
+                y={y.bandwidth() / 2}
+                dy="0.35em"
+                style={{
+                  transform: `translateX(${x(d.count)}px)`,
+                  animationDelay: `${delay + 500 + index * 40}ms`,
+                }}
+                className="fill-current motion-safe:animate-fade motion-safe:transition-transform motion-safe:duration-500"
+              >
+                {shareLabel(d.count, total)}
+              </text>
+            </g>
+          ))}
+        </svg>
+        {hovered !== null && data[hovered] && (
+          <div
+            aria-hidden="true"
+            // The viewBox matches the rendered width, so SVG units are pixels here.
+            style={{
+              top: (y(data[hovered].label) ?? 0) - 26,
+              left: MARGIN.left,
+            }}
+            className="pointer-events-none absolute rounded-md bg-zinc-900 px-2 py-1 text-xs whitespace-nowrap text-white shadow-lg motion-safe:animate-fade dark:bg-zinc-100 dark:text-zinc-900"
+          >
+            {data[hovered].label}: {jobsLabel(data[hovered].count)} ({shareLabel(data[hovered].count, total)})
+          </div>
+        )}
+      </div>
       <table aria-labelledby={id} className="sr-only">
         <thead>
           <tr>
