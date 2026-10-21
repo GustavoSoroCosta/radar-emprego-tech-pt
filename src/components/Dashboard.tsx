@@ -72,11 +72,22 @@ export function DashboardView({ jobs, filters }: { jobs: Job[]; filters: Filters
         <>
           <dl className="mb-12 grid grid-cols-2 gap-4 md:grid-cols-4">
             <StatCard label="Vagas" value={String(total)} />
-            <StatCard label="Remotas" value={`${percent(remote, total)}%`} detail={jobsLabel(remote)} />
-            <StatCard label="Híbridas" value={`${percent(hybrid, total)}%`} detail={jobsLabel(hybrid)} />
+            <StatCard
+              label="Remotas"
+              value={`${percent(remote, total)}%`}
+              share={percent(remote, total)}
+              detail={jobsLabel(remote)}
+            />
+            <StatCard
+              label="Híbridas"
+              value={`${percent(hybrid, total)}%`}
+              share={percent(hybrid, total)}
+              detail={jobsLabel(hybrid)}
+            />
             <StatCard
               label="Júnior"
               value={`${percent(junior, total)}%`}
+              share={percent(junior, total)}
               detail={`${jobsLabel(junior)} com júnior, estágio ou trainee no título`}
             />
           </dl>

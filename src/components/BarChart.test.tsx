@@ -1,5 +1,5 @@
-import { render, screen } from '@testing-library/react'
-import { describe, expect, it } from 'vitest'
+import { act, render, screen } from '@testing-library/react'
+import { describe, expect, it, vi } from 'vitest'
 import { BarChart } from './BarChart'
 
 const data = [
@@ -26,6 +26,24 @@ describe('BarChart', () => {
   it('shows the takeaway sentence under the title', () => {
     render(<BarChart title="T" data={data} total={10} />)
     expect(screen.getByText('React lidera, em 50% das vagas. Em segundo lugar: Vue (20%).')).toBeInTheDocument()
+  })
+
+  it('redraws at the measured width so the text keeps its size', () => {
+    let resize: ResizeObserverCallback = () => {}
+    vi.stubGlobal(
+      'ResizeObserver',
+      class {
+        constructor(callback: ResizeObserverCallback) {
+          resize = callback
+        }
+        observe() {}
+        disconnect() {}
+      },
+    )
+    const { container } = render(<BarChart title="T" data={data} total={10} />)
+    act(() => resize([{ contentRect: { width: 286 } } as ResizeObserverEntry], {} as ResizeObserver))
+    expect(container.querySelector('svg')?.getAttribute('viewBox')).toMatch(/^0 0 286 /)
+    vi.unstubAllGlobals()
   })
 
   it('states the base and warns when the sample is small', () => {

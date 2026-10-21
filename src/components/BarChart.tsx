@@ -1,5 +1,5 @@
 import { scaleBand, scaleLinear } from 'd3'
-import { useId } from 'react'
+import { useEffect, useId, useRef, useState } from 'react'
 import { jobsLabel, type CountItem } from '@/lib/aggregate'
 import { shareLabel, SMALL_SAMPLE, topInsight } from '@/lib/insights'
 
@@ -10,21 +10,36 @@ interface BarChartProps {
   total: number
   /** Header of the first column in the accessible table. */
   labelHeader?: string
-  width?: number
 }
 
 const BAR_HEIGHT = 28
 const MARGIN = { top: 8, right: 40, bottom: 8, left: 110 }
+// Width used on the server and before the first measurement; close to a card on desktop.
+const DEFAULT_WIDTH = 400
 
 /**
- * Horizontal bar chart. D3 only computes the scales; React draws the SVG,
- * so the chart renders on the server and needs no client JavaScript.
+ * Horizontal bar chart. D3 only computes the scales; React draws the SVG.
+ * The viewBox follows the real width of the chart (ResizeObserver), so the text stays
+ * at 14px on any screen instead of shrinking with the drawing.
  * Accessible: the title is an h2 so screen reader users can jump between charts,
  * and a visually hidden table carries the data. The SVG itself is hidden from
  * assistive tech so the numbers are not read twice.
  */
-export function BarChart({ title, data, total, labelHeader = 'Tecnologia', width = 560 }: BarChartProps) {
+export function BarChart({ title, data, total, labelHeader = 'Tecnologia' }: BarChartProps) {
   const id = useId()
+  const svgRef = useRef<SVGSVGElement>(null)
+  const [measured, setMeasured] = useState(DEFAULT_WIDTH)
+
+  useEffect(() => {
+    const svg = svgRef.current
+    if (!svg || typeof ResizeObserver === 'undefined') return
+    const observer = new ResizeObserver(([entry]) => setMeasured(Math.round(entry.contentRect.width)))
+    observer.observe(svg)
+    return () => observer.disconnect()
+  }, [])
+
+  // Never narrower than the label column plus a little room for the bars.
+  const width = Math.max(measured, MARGIN.left + MARGIN.right + 60)
   const height = MARGIN.top + MARGIN.bottom + data.length * BAR_HEIGHT
   const max = Math.max(0, ...data.map((d) => d.count))
   const insight = topInsight(data, total)
@@ -36,7 +51,7 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia', width
     .padding(0.25)
 
   return (
-    <figure>
+    <figure className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm dark:border-zinc-800 dark:bg-zinc-900/50">
       <figcaption>
         <h2 id={id} className="font-semibold">
           {title}
@@ -50,10 +65,10 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia', width
           )}
         </p>
       </figcaption>
-      <svg viewBox={`0 0 ${width} ${height}`} aria-hidden="true" className="w-full text-sm">
+      <svg ref={svgRef} viewBox={`0 0 ${width} ${height}`} aria-hidden="true" className="w-full text-sm">
         {/* Positions go through CSS (style) rather than SVG attributes so they can be transitioned
             when the filters change; motion-safe turns the animation off for prefers-reduced-motion. */}
-        {data.map((d) => (
+        {data.map((d, index) => (
           <g
             key={d.label}
             style={{ transform: `translateY(${y(d.label)}px)` }}
@@ -67,7 +82,11 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia', width
               height={y.bandwidth()}
               rx={3}
               style={{ width: x(d.count) }}
-              className="fill-violet-600 motion-safe:transition-[width] motion-safe:duration-500"
+              // The leader gets the darker shade, matching the sentence above the chart.
+              // Both shades keep at least 3:1 against the card, in light and dark mode.
+              className={`motion-safe:transition-[width] motion-safe:duration-500 ${
+                index === 0 ? 'fill-violet-700 dark:fill-violet-300' : 'fill-violet-500'
+              }`}
             />
             <text
               x={MARGIN.left + 6}
