@@ -33,7 +33,7 @@ export function FilterBar({ filters, cities, onChange }: FilterBarProps) {
   return (
     // On wider screens the filters stay pinned while scrolling through the charts. The frosted
     // background is mostly opaque, so the text keeps its contrast whatever passes underneath.
-    <div className="mb-8 flex flex-col gap-4 md:sticky md:top-0 md:z-20 md:-mx-4 md:border-b md:border-zinc-200/80 md:bg-white/90 md:px-4 md:py-4 md:backdrop-blur-md md:dark:border-zinc-800/80 md:dark:bg-zinc-950/90">
+    <div className="mb-8 flex flex-col gap-4 md:sticky md:top-0 md:z-20 md:-mx-4 md:border-b md:border-zinc-200/80 md:bg-background/90 md:px-4 md:py-4 md:backdrop-blur-md md:dark:border-zinc-800/80">
       <div role="group" aria-label="Área" className="flex flex-wrap items-center gap-2">
         <span className="mr-1 text-sm text-zinc-600 dark:text-zinc-400" aria-hidden="true">
           Área
