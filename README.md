@@ -1,20 +1,22 @@
 # Radar do Emprego Tech PT
 
 A dashboard that shows what tech companies in Portugal are asking for in their job ads:
-the most requested technologies, where the jobs are and how much of the work is remote, hybrid or on-site.
-It uses real, daily-updated data from the [itjobs.pt](https://www.itjobs.pt) API.
+the most requested technologies, which areas are hiring, where the jobs are and how much of the work is
+remote, hybrid or on-site. It uses real, daily-updated data from the [itjobs.pt](https://www.itjobs.pt) API.
 
 ![Dashboard on desktop](docs/screenshot-desktop.png)
 
 <p align="center">
-  <img src="docs/screenshot-mobile.png" alt="Dashboard on a phone" width="280">
+  <img src="docs/screenshot-mobile.png" alt="Dashboard on a phone, dark mode, filtered to frontend jobs" width="280">
 </p>
 
-## What it shows
+## What it does
 
-- Headline numbers: jobs analysed, share of remote, hybrid and junior roles
-- Technologies asked for in frontend roles and across all roles
-- Jobs per city and per work model
+- Filters by area (frontend, backend, fullstack, mobile, data, DevOps, QA), city and work model, plus a
+  shortcut for my own criteria. Filters live in the URL, so any view can be shared as a link.
+- Every chart opens with a one-line takeaway written from the data ("SQL lidera, em 29% das vagas…"),
+  shows percentages with the number of jobs behind them, and warns when the sample is too small to trust.
+- A "how the data is handled" section explains the rules and their limits.
 
 ## How it works
 
@@ -22,13 +24,20 @@ It uses real, daily-updated data from the [itjobs.pt](https://www.itjobs.pt) API
    for 24 hours, so the API is hit at most once a day. The API key only lives on the server.
 2. **Normalising** (`src/lib/normalize.ts`) — each job is reduced to what the dashboard needs: technologies
    (matched against a closed list, with care for look-alikes such as Java/JavaScript or React/React Native),
-   work model and whether it is a junior role.
-3. **Aggregating** (`src/lib/aggregate.ts`) — plain functions count jobs per technology, city or work model.
-4. **Drawing** (`src/components/BarChart.tsx`) — D3 computes the scales and React renders the SVG on the
-   server, so charts need no client-side JavaScript. Each chart has an accessible name, a text summary and a
-   visually hidden table with the same data.
+   area (from the title, or from the technologies when the title is generic), work model and seniority.
+3. **Aggregating** (`src/lib/aggregate.ts`, `src/lib/insights.ts`) — plain, tested functions count jobs and
+   write the takeaway sentence of each chart.
+4. **Filtering** (`src/components/Dashboard.tsx`) — the page is rendered once a day on the server; filtering
+   then happens in the browser, in React state mirrored to the URL.
+5. **Drawing** (`src/components/BarChart.tsx`) — D3 computes the scales and React renders the SVG. The chart
+   measures its own width so labels stay readable on phones.
 
-Without an API key, or if the API fails, the page falls back to sample data and says so.
+## Accessibility
+
+Lighthouse scores 100 in light and dark mode, on desktop and mobile. Beyond that it was checked by hand:
+keyboard-only use, Windows high contrast mode, a 320px wide screen and the heading structure. Each chart has
+an `h2` and a visually hidden table with the same data; filter buttons expose their state with
+`aria-pressed`, and the job count is announced to screen readers when the filters change.
 
 ## Stack
 
@@ -42,6 +51,8 @@ cp .env.example .env.local   # then add your itjobs.pt API key (https://itjobs.p
 npm run dev                  # http://localhost:3000
 npm test
 ```
+
+Without an API key, or if the API fails, the page falls back to sample data and says so.
 
 ## Data
 
