@@ -1,5 +1,6 @@
 import { Suspense } from 'react'
 import { Dashboard, DashboardView } from '@/components/Dashboard'
+import { Methodology } from '@/components/Methodology'
 import { DEFAULT_FILTERS } from '@/lib/filters'
 import { getJobs } from '@/lib/jobs'
 
@@ -42,13 +43,15 @@ export default async function Home() {
         <Dashboard jobs={jobs} />
       </Suspense>
 
-      <footer className="mt-12 space-y-2 border-t border-zinc-200 pt-4 text-sm text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
+      <Methodology />
+
+      <footer className="mt-8 space-y-2 border-t border-zinc-200 pt-4 text-sm text-zinc-600 dark:border-zinc-800 dark:text-zinc-400">
         <p>
           Dados:{' '}
           <a href="https://www.itjobs.pt" className={linkClass}>
             itjobs.pt
           </a>
-          . Uma vaga pode contar em várias cidades e pedir várias tecnologias.
+          , com autorização.
         </p>
         <p>
           Feito por Gustavo Soro Costa ·{' '}
