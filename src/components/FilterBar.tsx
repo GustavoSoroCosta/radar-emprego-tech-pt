@@ -17,14 +17,14 @@ interface FilterBarProps {
 const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500'
 
 const buttonClass =
-  `rounded-full border px-3 py-1.5 text-sm transition-colors ${focusRing} ` +
+  `shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 text-sm transition-colors ${focusRing} ` +
   'border-zinc-300 hover:bg-zinc-100 aria-pressed:border-violet-600 aria-pressed:bg-violet-600 aria-pressed:text-white ' +
   'dark:border-zinc-700 dark:hover:bg-zinc-800 dark:aria-pressed:bg-violet-600 ' +
   // High contrast mode drops background colours, so the pressed state would vanish; use the system highlight instead.
   'forced-colors:aria-pressed:forced-color-adjust-none forced-colors:aria-pressed:border-[Highlight] ' +
   'forced-colors:aria-pressed:bg-[Highlight] forced-colors:aria-pressed:text-[HighlightText]'
 
-const selectClass = `rounded-md border border-zinc-300 bg-transparent px-2 py-1.5 text-sm disabled:opacity-50 dark:border-zinc-700 ${focusRing}`
+const selectClass = `min-w-0 flex-1 md:flex-none rounded-md border border-zinc-300 bg-transparent px-2 py-1.5 text-sm disabled:opacity-50 dark:border-zinc-700 ${focusRing}`
 
 /** Filter controls. Toggle buttons expose their state with aria-pressed; selects are native for free keyboard support. */
 export function FilterBar({ filters, cities, onChange }: FilterBarProps) {
@@ -34,8 +34,13 @@ export function FilterBar({ filters, cities, onChange }: FilterBarProps) {
     // On wider screens the filters stay pinned while scrolling through the charts. The frosted
     // background is mostly opaque, so the text keeps its contrast whatever passes underneath.
     <div className="mb-8 flex flex-col gap-4 md:sticky md:top-0 md:z-20 md:-mx-4 md:border-b md:border-zinc-200/80 md:bg-background/90 md:px-4 md:py-4 md:backdrop-blur-md md:dark:border-zinc-800/80">
-      <div role="group" aria-label="Área" className="flex flex-wrap items-center gap-2">
-        <span className="mr-1 text-sm text-zinc-600 dark:text-zinc-400" aria-hidden="true">
+      {/* One swipeable row on phones instead of three rows of chips; wraps normally from md up. */}
+      <div
+        role="group"
+        aria-label="Área"
+        className="-mx-4 flex items-center gap-2 overflow-x-auto px-4 pb-1 [scrollbar-width:none] md:mx-0 md:flex-wrap md:overflow-visible md:px-0 md:pb-0"
+      >
+        <span className="mr-1 shrink-0 text-sm text-zinc-600 dark:text-zinc-400" aria-hidden="true">
           Área
         </span>
         {AREA_OPTIONS.map((option) => (
@@ -51,7 +56,7 @@ export function FilterBar({ filters, cities, onChange }: FilterBarProps) {
         ))}
       </div>
 
-      <div className="flex flex-wrap items-center gap-3">
+      <div className="grid grid-cols-2 items-center gap-3 md:flex md:flex-wrap">
         <button
           type="button"
           aria-pressed={filters.mine}
@@ -62,7 +67,7 @@ export function FilterBar({ filters, cities, onChange }: FilterBarProps) {
           ★ As minhas vagas
         </button>
 
-        <label className="flex items-center gap-2 text-sm">
+        <label className="flex min-w-0 items-center gap-2 text-sm">
           Cidade
           <select
             name="cidade"
@@ -80,7 +85,7 @@ export function FilterBar({ filters, cities, onChange }: FilterBarProps) {
           </select>
         </label>
 
-        <label className="flex items-center gap-2 text-sm">
+        <label className="flex min-w-0 items-center gap-2 text-sm">
           Regime
           <select
             name="regime"
@@ -101,7 +106,7 @@ export function FilterBar({ filters, cities, onChange }: FilterBarProps) {
         <button
           type="button"
           onClick={() => onChange(DEFAULT_FILTERS)}
-          className={`text-sm text-zinc-600 underline hover:no-underline dark:text-zinc-400 ${focusRing}`}
+          className={`justify-self-end text-sm text-zinc-600 underline hover:no-underline dark:text-zinc-400 ${focusRing}`}
         >
           Limpar filtros
         </button>
