@@ -12,6 +12,8 @@ interface BarChartProps {
   labelHeader?: string
   /** Entrance delay in ms, so the cards on a page appear one after the other. */
   delay?: number
+  /** Makes rows clickable (mouse shortcut; the explorer's select is the keyboard way). */
+  onSelect?: (label: string) => void
 }
 
 const BAR_HEIGHT = 28
@@ -27,7 +29,7 @@ const DEFAULT_WIDTH = 400
  * and a visually hidden table carries the data. The SVG itself is hidden from
  * assistive tech so the numbers are not read twice.
  */
-export function BarChart({ title, data, total, labelHeader = 'Tecnologia', delay = 0 }: BarChartProps) {
+export function BarChart({ title, data, total, labelHeader = 'Tecnologia', delay = 0, onSelect }: BarChartProps) {
   const id = useId()
   const svgRef = useRef<SVGSVGElement>(null)
   const [measured, setMeasured] = useState(DEFAULT_WIDTH)
@@ -77,9 +79,10 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia', delay
               key={d.label}
               style={{ transform: `translateY(${y(d.label)}px)` }}
               onMouseEnter={() => setHovered(index)}
+              onClick={onSelect && (() => onSelect(d.label))}
               className={`transition-opacity motion-safe:transition-[transform,opacity] motion-safe:duration-500 ${
                 hovered !== null && hovered !== index ? 'opacity-40' : ''
-              }`}
+              } ${onSelect ? 'cursor-pointer' : ''}`}
             >
               {/* Invisible hit area across the whole row, so the gaps between bars do not flicker. */}
               <rect width={width} height={BAR_HEIGHT} y={-(BAR_HEIGHT - y.bandwidth()) / 2} fill="transparent" />
@@ -126,14 +129,17 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia', delay
         {hovered !== null && data[hovered] && (
           <div
             aria-hidden="true"
-            // The viewBox matches the rendered width, so SVG units are pixels here.
+            // The viewBox matches the rendered width, so SVG units are pixels here. Centred over the
+            // bar, but kept inside the card so it never gets cut off at either edge.
             style={{
-              top: (y(data[hovered].label) ?? 0) - 26,
-              left: MARGIN.left,
+              top: (y(data[hovered].label) ?? 0) - (onSelect ? 44 : 30),
+              left: Math.min(Math.max(MARGIN.left + x(data[hovered].count) / 2, 100), width - 100),
             }}
-            className="pointer-events-none absolute rounded-md bg-zinc-900 px-2 py-1 text-xs whitespace-nowrap text-white shadow-lg motion-safe:animate-fade dark:bg-zinc-100 dark:text-zinc-900"
+            className="pointer-events-none absolute z-10 -translate-x-1/2 rounded-md bg-zinc-900 px-2.5 py-1.5 text-center text-xs whitespace-nowrap text-white shadow-lg motion-safe:animate-fade dark:bg-zinc-100 dark:text-zinc-900"
           >
-            {data[hovered].label}: {jobsLabel(data[hovered].count)} ({shareLabel(data[hovered].count, total)})
+            <span className="font-semibold">{data[hovered].label}</span>: {jobsLabel(data[hovered].count)} (
+            {shareLabel(data[hovered].count, total)})
+            {onSelect && <span className="block text-[11px] opacity-75">Clique para explorar</span>}
           </div>
         )}
       </div>
