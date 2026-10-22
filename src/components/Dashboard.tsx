@@ -2,6 +2,7 @@
 
 import { useMemo, useState, useSyncExternalStore } from 'react'
 import { BarChart } from '@/components/BarChart'
+import { CopyLinkButton } from '@/components/CopyLinkButton'
 import { FilterBar } from '@/components/FilterBar'
 import { StatCard } from '@/components/StatCard'
 import { TechExplorer } from '@/components/TechExplorer'
@@ -104,11 +105,14 @@ function DashboardView({ jobs, filters }: { jobs: Job[]; filters: Filters }) {
 
   return (
     <>
-      <p role="status" aria-live="polite" className="mb-6 text-sm text-zinc-600 dark:text-zinc-400">
-        A mostrar {jobsLabel(total)}
-        {areaName}
-        {filters.mine && ' que encaixam nas minhas preferências'}.
-      </p>
+      <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
+        <p role="status" aria-live="polite" className="text-sm text-zinc-600 dark:text-zinc-400">
+          A mostrar {jobsLabel(total)}
+          {areaName}
+          {filters.mine && ' que encaixam nas minhas preferências'}.
+        </p>
+        <CopyLinkButton />
+      </div>
 
       {total === 0 ? (
         <p className="rounded-xl border border-dashed border-zinc-300 bg-white p-8 text-center text-zinc-600 dark:border-zinc-700 dark:bg-zinc-900/50 dark:text-zinc-400">
