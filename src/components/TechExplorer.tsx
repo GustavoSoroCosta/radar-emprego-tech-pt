@@ -46,7 +46,7 @@ export function TechExplorer({ jobs, options, selected, onSelect, delay = 0 }: T
             name="tecnologia"
             value={selected}
             onChange={(event) => onSelect(event.target.value)}
-            className={`rounded-md border border-zinc-300 bg-transparent px-2 py-1.5 text-sm dark:border-zinc-700 ${focusRing}`}
+            className={`rounded-md border border-zinc-300 bg-white px-2 py-1.5 text-sm text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-700 ${focusRing}`}
           >
             {options.map((option) => (
               <option key={option} value={option}>

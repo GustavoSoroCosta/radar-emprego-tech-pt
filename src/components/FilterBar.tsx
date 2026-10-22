@@ -24,7 +24,7 @@ const buttonClass =
   'forced-colors:aria-pressed:forced-color-adjust-none forced-colors:aria-pressed:border-[Highlight] ' +
   'forced-colors:aria-pressed:bg-[Highlight] forced-colors:aria-pressed:text-[HighlightText]'
 
-const selectClass = `min-w-0 flex-1 md:flex-none rounded-md border border-zinc-300 bg-transparent px-2 py-1.5 text-sm disabled:opacity-50 dark:border-zinc-700 ${focusRing}`
+const selectClass = `min-w-0 flex-1 md:flex-none rounded-md border border-zinc-300 bg-white px-2 py-1.5 text-sm text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100 disabled:opacity-50 dark:border-zinc-700 ${focusRing}`
 
 /** Filter controls. Toggle buttons expose their state with aria-pressed; selects are native for free keyboard support. */
 export function FilterBar({ filters, cities, onChange }: FilterBarProps) {
