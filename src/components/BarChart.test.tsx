@@ -46,12 +46,8 @@ describe('BarChart', () => {
     vi.unstubAllGlobals()
   })
 
-  it('states the base and warns when the sample is small', () => {
-    const { rerender } = render(<BarChart title="T" data={data} total={10} />)
-    expect(screen.getByText(/Base: 10 vagas/)).toBeInTheDocument()
-    expect(screen.getByText(/Amostra pequena/)).toBeInTheDocument()
-
-    rerender(<BarChart title="T" data={data} total={804} />)
-    expect(screen.queryByText(/Amostra pequena/)).not.toBeInTheDocument()
+  it('states how many jobs the chart is based on', () => {
+    render(<BarChart title="T" data={data} total={10} />)
+    expect(screen.getByText('Base: 10 vagas.')).toBeInTheDocument()
   })
 })

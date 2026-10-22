@@ -107,8 +107,9 @@ export function FilterBar({ filters, cities, onChange }: FilterBarProps) {
         </button>
       </div>
 
-      {/* Visible text instead of a title tooltip, which touch and keyboard users never see. */}
-      <p id="mine-hint" className="-mt-2 text-xs text-zinc-600 dark:text-zinc-400">
+      {/* Shown while the shortcut is on, so the page stays clean otherwise. Screen readers always
+          get it through aria-describedby, which also reads hidden elements. */}
+      <p id="mine-hint" className={`-mt-2 text-xs text-zinc-600 dark:text-zinc-400 ${filters.mine ? '' : 'hidden'}`}>
         ★ As minhas vagas: os critérios do autor, presencial em Viana do Castelo, híbrido no Porto ou remoto.
       </p>
     </div>

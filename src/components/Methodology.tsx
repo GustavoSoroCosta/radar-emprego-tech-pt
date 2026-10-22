@@ -6,7 +6,7 @@ import { SMALL_SAMPLE } from '@/lib/insights'
  */
 export function Methodology() {
   return (
-    <details className="mt-12 rounded-lg border border-zinc-200 p-4 text-sm dark:border-zinc-800">
+    <details className="mt-6 rounded-xl border border-zinc-200 bg-white p-5 text-sm shadow-sm dark:border-zinc-800 dark:bg-zinc-900/50">
       <summary className="cursor-pointer font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500">
         Como são tratados os dados
       </summary>
@@ -39,8 +39,8 @@ export function Methodology() {
         <div>
           <dt className="font-medium text-zinc-900 dark:text-zinc-100">Limites</dt>
           <dd>
-            Uma vaga pode estar em várias cidades. Gráficos com menos de {SMALL_SAMPLE} vagas têm um aviso, porque
-            aí uma ou duas vagas mudam muito as percentagens.
+            Uma vaga pode estar em várias cidades. Cada gráfico indica a sua base: com menos de {SMALL_SAMPLE} vagas,
+            uma ou duas vagas mudam muito as percentagens, por isso convém lê-las com cautela.
           </dd>
         </div>
       </dl>

@@ -1,7 +1,7 @@
 import { scaleBand, scaleLinear } from 'd3'
 import { useEffect, useId, useRef, useState } from 'react'
 import { jobsLabel, type CountItem } from '@/lib/aggregate'
-import { shareLabel, SMALL_SAMPLE, topInsight } from '@/lib/insights'
+import { shareLabel, topInsight } from '@/lib/insights'
 
 interface BarChartProps {
   title: string
@@ -56,7 +56,7 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia', delay
   return (
     <figure
       style={{ animationDelay: `${delay}ms` }}
-      className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md motion-safe:animate-rise motion-safe:transition motion-safe:hover:-translate-y-0.5 dark:border-zinc-800 dark:bg-zinc-900/50"
+      className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm motion-safe:animate-rise dark:border-zinc-800 dark:bg-zinc-900/50"
     >
       <figcaption>
         <h2 id={id} className="font-semibold">
@@ -64,12 +64,7 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia', delay
         </h2>
         {/* The takeaway in words, as data journalism does, so the reader does not have to work it out. */}
         {insight && <p className="mt-1 text-sm">{insight}</p>}
-        <p className="mb-2 text-xs text-zinc-600 dark:text-zinc-400">
-          Base: {jobsLabel(total)}.
-          {total < SMALL_SAMPLE && (
-            <span className="text-amber-700 dark:text-amber-400"> Amostra pequena, ler com cautela.</span>
-          )}
-        </p>
+        <p className="mb-2 text-xs text-zinc-600 dark:text-zinc-400">Base: {jobsLabel(total)}.</p>
       </figcaption>
       {/* Hovering a row dims the others and shows its job count. Mouse only: the same numbers are
           in the table for screen readers, so this adds no information that is missing elsewhere. */}

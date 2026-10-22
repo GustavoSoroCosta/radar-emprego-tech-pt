@@ -18,7 +18,7 @@ export function StatCard({ label, value, suffix = '', detail, share, delay = 0 }
   return (
     <div
       style={{ animationDelay: `${delay}ms` }}
-      className="flex flex-col rounded-xl border border-zinc-200 bg-white p-5 shadow-sm transition-shadow hover:shadow-md motion-safe:animate-rise motion-safe:transition motion-safe:hover:-translate-y-0.5 dark:border-zinc-800 dark:bg-zinc-900/50"
+      className="flex flex-col rounded-xl border border-zinc-200 bg-white p-5 shadow-sm motion-safe:animate-rise dark:border-zinc-800 dark:bg-zinc-900/50"
     >
       <dt className="text-sm text-zinc-600 dark:text-zinc-400">{label}</dt>
       <dd className="order-first text-3xl font-bold tabular-nums">
