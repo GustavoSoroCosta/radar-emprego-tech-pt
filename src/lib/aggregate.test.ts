@@ -1,5 +1,5 @@
 import { describe, expect, it } from 'vitest'
-import { countAreas, countBy, countTechnologies, countWorkModes, jobsLabel, percent } from './aggregate'
+import { countAreas, countBy, countCompanies, countTechnologies, countWorkModes, jobsLabel, percent } from './aggregate'
 import type { Job } from './types'
 
 const job = (overrides: Partial<Job> = {}): Job => ({
@@ -74,11 +74,18 @@ describe('jobsLabel', () => {
 })
 
 describe('countAreas', () => {
-  it('counts jobs per area with readable labels', () => {
-    const jobs = [job({ area: 'data' }), job({ area: 'data' }), job({ area: 'other' })]
+  it('counts jobs per area and puts "Outras" last and muted, even when it is the biggest', () => {
+    const jobs = [job({ area: 'other' }), job({ area: 'other' }), job({ area: 'other' }), job({ area: 'data' })]
     expect(countAreas(jobs)).toEqual([
-      { label: 'Dados e IA', count: 2 },
-      { label: 'Outras', count: 1 },
+      { label: 'Dados e IA', count: 1 },
+      { label: 'Outras', count: 3, muted: true },
     ])
+  })
+})
+
+describe('countCompanies', () => {
+  it('counts each company once and ignores missing names', () => {
+    const jobs = [job({ company: 'A' }), job({ company: 'A' }), job({ company: 'B' }), job({ company: '' })]
+    expect(countCompanies(jobs)).toBe(2)
   })
 })

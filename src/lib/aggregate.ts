@@ -3,6 +3,8 @@ import type { Area, Job, WorkMode } from './types'
 export interface CountItem {
   label: string
   count: number
+  /** A catch-all bucket ("Outras") that is shown for completeness but drawn in grey. */
+  muted?: boolean
 }
 
 /** Counts jobs per key (a job with several keys counts once for each), most common first. */
@@ -43,8 +45,19 @@ export const AREA_LABELS: Record<Area, string> = {
   other: 'Outras',
 }
 
+/**
+ * Jobs per area, with "Outras" moved to the end and muted. It is the biggest bucket, but
+ * "Outras lidera" would tell the reader nothing; the named areas are the story.
+ */
 export function countAreas(jobs: Job[]): CountItem[] {
-  return countBy(jobs, (job) => [AREA_LABELS[job.area]])
+  const counts = countBy(jobs, (job) => [AREA_LABELS[job.area]])
+  const other = counts.filter((item) => item.label === AREA_LABELS.other).map((item) => ({ ...item, muted: true }))
+  return [...counts.filter((item) => item.label !== AREA_LABELS.other), ...other]
+}
+
+/** Number of different companies behind a set of jobs. */
+export function countCompanies(jobs: Job[]): number {
+  return new Set(jobs.map((job) => job.company).filter(Boolean)).size
 }
 
 export function countWorkModes(jobs: Job[]): CountItem[] {

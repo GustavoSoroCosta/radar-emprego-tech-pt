@@ -98,10 +98,14 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia', delay
                   transformOrigin: 'left',
                   animationDelay: `${delay + 150 + index * 40}ms`,
                 }}
-                // The leader gets the darker shade, matching the sentence above the chart.
-                // Both shades keep at least 3:1 against the card, in light and dark mode.
+                // The leader gets the darker shade, matching the sentence above the chart; catch-all
+                // buckets are grey. Every shade keeps at least 3:1 against the card, in both themes.
                 className={`motion-safe:animate-grow motion-safe:transition-[width] motion-safe:duration-500 ${
-                  index === 0 ? 'fill-violet-700 dark:fill-violet-300' : 'fill-violet-500'
+                  d.muted
+                    ? 'fill-zinc-500'
+                    : index === 0
+                      ? 'fill-violet-700 dark:fill-violet-300'
+                      : 'fill-violet-500'
                 }`}
               />
               <text

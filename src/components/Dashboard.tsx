@@ -4,7 +4,7 @@ import { useMemo, useSyncExternalStore } from 'react'
 import { BarChart } from '@/components/BarChart'
 import { FilterBar } from '@/components/FilterBar'
 import { StatCard } from '@/components/StatCard'
-import { countAreas, countBy, countTechnologies, countWorkModes, jobsLabel, percent } from '@/lib/aggregate'
+import { countAreas, countBy, countCompanies, countTechnologies, jobsLabel, percent } from '@/lib/aggregate'
 import { applyFilters, filtersFromSearch, filtersToSearch, type AreaFilter, type Filters } from '@/lib/filters'
 import type { Job } from '@/lib/types'
 
@@ -73,6 +73,7 @@ function DashboardView({ jobs, filters }: { jobs: Job[]; filters: Filters }) {
   const hybrid = visible.filter((job) => job.workMode === 'hybrid').length
   const junior = visible.filter((job) => job.junior).length
   const frontendJobs = visible.filter((job) => job.area === 'frontend')
+  const companies = countCompanies(visible)
   const areaName = AREA_NAMES[filters.area]
 
   return (
@@ -84,13 +85,17 @@ function DashboardView({ jobs, filters }: { jobs: Job[]; filters: Filters }) {
       </p>
 
       {total === 0 ? (
-        <p className="rounded-lg border border-dashed border-zinc-300 p-8 text-center dark:border-zinc-700">
+        <p className="rounded-xl border border-dashed border-zinc-300 bg-white p-8 text-center text-zinc-600 dark:border-zinc-700 dark:bg-zinc-900/50 dark:text-zinc-400">
           Nenhuma vaga com estes filtros. Experimente limpar algum.
         </p>
       ) : (
         <>
           <dl className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
-            <StatCard label="Vagas" value={total} />
+            <StatCard
+              label="Vagas"
+              value={total}
+              detail={`de ${companies} ${companies === 1 ? 'empresa' : 'empresas'}`}
+            />
             <StatCard
               label="Remotas"
               delay={60}
@@ -141,19 +146,13 @@ function DashboardView({ jobs, filters }: { jobs: Job[]; filters: Filters }) {
                 />
               </>
             )}
+            {/* No work model chart: the remote and hybrid cards above already say it. */}
             <BarChart
               title="Vagas por cidade"
               labelHeader="Cidade"
               data={countBy(visible, (job) => job.cities, 8)}
               total={total}
               delay={480}
-            />
-            <BarChart
-              title="Vagas por regime de trabalho"
-              labelHeader="Regime"
-              data={countWorkModes(visible)}
-              total={total}
-              delay={560}
             />
           </div>
         </>
