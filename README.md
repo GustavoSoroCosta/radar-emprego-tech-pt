@@ -9,15 +9,17 @@ remote, hybrid or on-site. It uses real, daily-updated data from the [itjobs.pt]
 ![Dashboard on desktop](docs/screenshot-desktop.png)
 
 <p align="center">
-  <img src="docs/screenshot-mobile.png" alt="Dashboard on a phone, dark mode, filtered to frontend jobs" width="280">
+  <img src="docs/screenshot-mobile.png" alt="Technology explorer on a phone, dark mode" width="280">
 </p>
 
 ## What it does
 
 - Filters by area (frontend, backend, fullstack, mobile, data, DevOps, QA), city and work model, plus a
-  shortcut for my own criteria. Filters live in the URL, so any view can be shared as a link.
-- Every chart opens with a one-line takeaway written from the data ("SQL lidera, em 29% das vagas…"),
-  shows percentages with the number of jobs behind them, and warns when the sample is too small to trust.
+  shortcut for my own criteria. Filters live in the URL, so any view can be shared with one click.
+- Every chart opens with a one-line takeaway written from the data ("SQL lidera, em 29% das vagas…") and
+  shows percentages with the number of jobs behind them.
+- A technology explorer: pick a technology, or click its bar, to see what the same job ads also ask for
+  ("Quem pede React também pede JavaScript em 54% dos casos"), with a link to those jobs on itjobs.pt.
 - A "how the data is handled" section explains the rules and their limits.
 
 ## How it works
