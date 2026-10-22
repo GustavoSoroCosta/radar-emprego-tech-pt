@@ -27,6 +27,16 @@ export function countTechnologies(jobs: Job[], limit = 10): CountItem[] {
   return countBy(jobs, (job) => job.technologies, limit)
 }
 
+/**
+ * What tends to come with a technology: among the jobs that ask for it, how many also ask for
+ * each other technology. Answers "if I learn X, what should I learn next?".
+ */
+export function relatedTechnologies(jobs: Job[], technology: string, limit = 6) {
+  const withTechnology = jobs.filter((job) => job.technologies.includes(technology))
+  const related = countBy(withTechnology, (job) => job.technologies.filter((t) => t !== technology), limit)
+  return { jobs: withTechnology, related }
+}
+
 export const WORK_MODE_LABELS: Record<WorkMode, string> = {
   onsite: 'Presencial',
   hybrid: 'Híbrido',

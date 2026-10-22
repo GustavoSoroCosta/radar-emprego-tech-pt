@@ -1,5 +1,14 @@
 import { describe, expect, it } from 'vitest'
-import { countAreas, countBy, countCompanies, countTechnologies, countWorkModes, jobsLabel, percent } from './aggregate'
+import {
+  countAreas,
+  countBy,
+  countCompanies,
+  countTechnologies,
+  countWorkModes,
+  jobsLabel,
+  percent,
+  relatedTechnologies,
+} from './aggregate'
 import type { Job } from './types'
 
 const job = (overrides: Partial<Job> = {}): Job => ({
@@ -87,5 +96,28 @@ describe('countCompanies', () => {
   it('counts each company once and ignores missing names', () => {
     const jobs = [job({ company: 'A' }), job({ company: 'A' }), job({ company: 'B' }), job({ company: '' })]
     expect(countCompanies(jobs)).toBe(2)
+  })
+})
+
+describe('relatedTechnologies', () => {
+  const jobs = [
+    job({ id: 1, technologies: ['React', 'TypeScript', 'CSS'] }),
+    job({ id: 2, technologies: ['React', 'TypeScript'] }),
+    job({ id: 3, technologies: ['React', 'Java'] }),
+    job({ id: 4, technologies: ['Angular', 'TypeScript'] }),
+  ]
+
+  it('counts what else the jobs asking for a technology ask for, leaving it out', () => {
+    const { jobs: withReact, related } = relatedTechnologies(jobs, 'React')
+    expect(withReact.map((j) => j.id)).toEqual([1, 2, 3])
+    expect(related).toEqual([
+      { label: 'TypeScript', count: 2 },
+      { label: 'CSS', count: 1 },
+      { label: 'Java', count: 1 },
+    ])
+  })
+
+  it('returns nothing for a technology no job asks for', () => {
+    expect(relatedTechnologies(jobs, 'Vue')).toEqual({ jobs: [], related: [] })
   })
 })
