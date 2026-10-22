@@ -7,7 +7,7 @@ import { SMALL_SAMPLE } from '@/lib/insights'
 export function Methodology() {
   return (
     <details className="mt-6 rounded-xl border border-zinc-200 bg-white p-5 text-sm shadow-sm dark:border-zinc-800 dark:bg-zinc-900/50">
-      <summary className="cursor-pointer font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500">
+      <summary className="min-h-6 cursor-pointer py-0.5 font-semibold focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500">
         Como são tratados os dados
       </summary>
       <dl className="mt-4 space-y-3 text-zinc-700 dark:text-zinc-300">

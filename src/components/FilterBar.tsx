@@ -106,7 +106,7 @@ export function FilterBar({ filters, cities, onChange }: FilterBarProps) {
         <button
           type="button"
           onClick={() => onChange(DEFAULT_FILTERS)}
-          className={`justify-self-end text-sm text-zinc-600 underline hover:no-underline dark:text-zinc-400 ${focusRing}`}
+          className={`inline-flex min-h-6 items-center justify-self-end text-sm text-zinc-600 underline hover:no-underline dark:text-zinc-400 ${focusRing}`}
         >
           Limpar filtros
         </button>

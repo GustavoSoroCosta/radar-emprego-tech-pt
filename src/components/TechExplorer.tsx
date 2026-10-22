@@ -77,7 +77,7 @@ export function TechExplorer({ jobs, options, selected, onSelect, delay = 0 }: T
             href={`https://www.itjobs.pt/emprego?q=${encodeURIComponent(selected)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className={`mt-4 inline-flex items-center gap-1 text-sm font-medium text-violet-700 underline-offset-4 hover:underline dark:text-violet-300 ${focusRing}`}
+            className={`mt-4 inline-flex min-h-6 items-center gap-1 text-sm font-medium text-violet-700 underline-offset-4 hover:underline dark:text-violet-300 ${focusRing}`}
           >
             Procurar vagas de {selected} no itjobs.pt
             <span aria-hidden="true">↗</span>
