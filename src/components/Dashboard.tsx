@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useSyncExternalStore } from 'react'
+import { useMemo, useState, useSyncExternalStore } from 'react'
 import { BarChart } from '@/components/BarChart'
 import { CopyLinkButton } from '@/components/CopyLinkButton'
 import { FilterBar } from '@/components/FilterBar'
@@ -92,6 +92,8 @@ function DashboardView({
   const technologies = countTechnologies(visible, Infinity).map((item) => item.label)
   const selected = filters.tech && technologies.includes(filters.tech) ? filters.tech : technologies[0]
   const pick = (technology: string) => onChange({ ...filters, tech: technology })
+  // The job list is closed by default: the page is about the numbers, the list is on demand.
+  const [jobsOpen, setJobsOpen] = useState(false)
 
   function explore(technology: string) {
     pick(technology)
@@ -120,18 +122,27 @@ function DashboardView({
             A mostrar {jobsLabel(total)}
             {areaName}.
           </p>
-          {/* Outside the status on purpose, so filter changes are not announced with a link in them. */}
+          {/* Outside the status on purpose, so filter changes are not announced with a button in them. */}
           {total > 0 && (
-            <a
-              href="#vagas"
-              className="text-sm text-ink underline underline-offset-2 hover:no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
+            <button
+              type="button"
+              onClick={() => setJobsOpen(!jobsOpen)}
+              aria-expanded={jobsOpen}
+              aria-controls="vagas"
+              className="min-h-6 touch-manipulation text-sm text-ink underline underline-offset-2 hover:no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
             >
-              Ver as vagas
-            </a>
+              {jobsOpen ? 'Esconder as vagas' : 'Ver as vagas'}
+            </button>
           )}
         </div>
         <CopyLinkButton />
       </div>
+
+      {/* Opens right under its button, so the next Tab lands in the list. It stays open while the
+          filters change, and is keyed by them so each view starts again from its ten newest jobs. */}
+      {jobsOpen && total > 0 && (
+        <JobList key={`${filters.area}-${filters.city}-${filters.workMode}`} jobs={visible} />
+      )}
 
       {total === 0 ? (
         <p className="rounded-lg border border-dashed border-line bg-card p-8 text-center text-muted">
@@ -209,9 +220,6 @@ function DashboardView({
               </>
             )}
           </div>
-
-          {/* Keyed by the filters, so a new view starts again from its ten newest jobs. */}
-          <JobList key={`${filters.area}-${filters.city}-${filters.workMode}`} jobs={visible} />
         </>
       )}
     </>

@@ -42,17 +42,14 @@ export function JobList({ jobs }: { jobs: Job[] }) {
     <section
       id="vagas"
       aria-labelledby="vagas-titulo"
-      // A little air above it when the "Ver as vagas" link jumps here; from md up the html
-      // scroll-padding (globals.css) already keeps it clear of the sticky filter bar.
-      className="mt-6 scroll-mt-4 rounded-lg border border-line bg-card p-5"
+      className="mb-6 rounded-lg border border-line bg-card p-5"
     >
-      <h2 id="vagas-titulo" className="font-semibold">
-        Vagas desta vista
+      {/* No visible title: the dates and links speak for themselves. Screen reader users still get a
+          heading to jump to, and the order, which sighted users read from the dates. */}
+      <h2 id="vagas-titulo" className="sr-only">
+        As vagas, da mais recente para a mais antiga
       </h2>
-      <p className="mt-1 text-sm text-muted">
-        Da mais recente para a mais antiga. Cada título abre o anúncio no itjobs.pt.
-      </p>
-      <ul ref={listRef} className="mt-3 divide-y divide-line">
+      <ul ref={listRef} className="-mt-3 divide-y divide-line">
         {newest.slice(0, shown).map((job) => {
           const rest = placeAndMode(job)
           return (
