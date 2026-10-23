@@ -10,7 +10,7 @@ interface BarChartProps {
   total: number
   /** Header of the first column in the accessible table. */
   labelHeader?: string
-  /** Entrance delay in ms, so the cards on a page appear one after the other. */
+  /** Delay in ms before the bars grow, so the charts on a page fill one after the other. */
   delay?: number
   /** Makes rows clickable (mouse shortcut; the explorer's select is the keyboard way). */
   onSelect?: (label: string) => void
@@ -57,8 +57,7 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia', delay
 
   return (
     <figure
-      style={{ animationDelay: `${delay}ms` }}
-      className="rounded-xl border border-zinc-200 bg-white p-5 shadow-sm motion-safe:animate-rise dark:border-zinc-800 dark:bg-zinc-900/50"
+      className="rounded-lg border border-line bg-card p-5"
     >
       <figcaption>
         <h2 id={id} className="font-semibold">
@@ -66,7 +65,7 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia', delay
         </h2>
         {/* The takeaway in words, as data journalism does, so the reader does not have to work it out. */}
         {insight && <p className="mt-1 text-sm">{insight}</p>}
-        <p className="mb-2 text-xs text-zinc-600 dark:text-zinc-400">Base: {jobsLabel(total)}.</p>
+        <p className="mb-2 text-xs text-muted">Base: {jobsLabel(total)}.</p>
       </figcaption>
       {/* Hovering a row dims the others and shows its job count. Mouse only: the same numbers are
           in the table for screen readers, so this adds no information that is missing elsewhere. */}
@@ -106,11 +105,7 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia', delay
                 // The leader gets the darker shade, matching the sentence above the chart; catch-all
                 // buckets are grey. Every shade keeps at least 3:1 against the card, in both themes.
                 className={`motion-safe:animate-grow motion-safe:transition-[width] motion-safe:duration-500 ${
-                  d.muted
-                    ? 'fill-zinc-500'
-                    : index === 0
-                      ? 'fill-violet-700 dark:fill-violet-300'
-                      : 'fill-violet-500'
+                  d.muted ? 'fill-neutral' : index === 0 ? 'fill-ink dark:fill-signal-strong' : 'fill-signal'
                 }`}
               />
               <text
@@ -137,7 +132,7 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia', delay
               top: (y(data[hovered].label) ?? 0) - (onSelect ? 44 : 30),
               left: Math.min(Math.max(MARGIN.left + x(data[hovered].count) / 2, 100), width - 100),
             }}
-            className="pointer-events-none absolute z-10 -translate-x-1/2 rounded-md bg-zinc-900 px-2.5 py-1.5 text-center text-xs whitespace-nowrap text-white shadow-lg motion-safe:animate-fade dark:bg-zinc-100 dark:text-zinc-900"
+            className="pointer-events-none absolute z-10 -translate-x-1/2 rounded-md bg-ink px-2.5 py-1.5 text-center text-xs whitespace-nowrap text-paper shadow-lg motion-safe:animate-fade"
           >
             <span className="font-semibold">{data[hovered].label}</span>: {jobsLabel(data[hovered].count)} (
             {shareLabel(data[hovered].count, total)})

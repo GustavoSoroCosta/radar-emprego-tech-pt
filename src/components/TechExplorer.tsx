@@ -8,16 +8,16 @@ interface TechExplorerProps {
   options: string[]
   selected: string
   onSelect: (technology: string) => void
-  delay?: number
 }
 
-const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500'
+const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-panel-signal'
 
 /**
  * Pick a technology and see what usually comes with it in the same job ads. The select is the
  * keyboard-friendly way in; clicking a bar in the charts above is a mouse shortcut to the same thing.
+ * This is the page's one bold block: a navy panel in both themes, with its own light-on-dark colours.
  */
-export function TechExplorer({ jobs, options, selected, onSelect, delay = 0 }: TechExplorerProps) {
+export function TechExplorer({ jobs, options, selected, onSelect }: TechExplorerProps) {
   const { jobs: withTechnology, related } = relatedTechnologies(jobs, selected)
   const total = withTechnology.length
   const remote = withTechnology.filter((job) => job.workMode === 'remote').length
@@ -28,15 +28,15 @@ export function TechExplorer({ jobs, options, selected, onSelect, delay = 0 }: T
     <section
       id="explorador"
       aria-labelledby="explorer-title"
-      style={{ animationDelay: `${delay}ms` }}
-      className="scroll-mt-40 rounded-xl border border-violet-200 bg-white p-5 shadow-sm motion-safe:animate-rise md:col-span-2 dark:border-violet-900 dark:bg-zinc-900/50"
+      // color-scheme dark: the panel is dark even on the light page, so its select list must be too.
+      className="scroll-mt-40 rounded-xl bg-panel p-6 text-panel-ink [color-scheme:dark] md:col-span-2 md:p-8"
     >
       <div className="flex flex-wrap items-end justify-between gap-3">
         <div>
-          <h2 id="explorer-title" className="font-semibold">
+          <h2 id="explorer-title" className="text-lg font-semibold">
             Explorar uma tecnologia
           </h2>
-          <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="mt-1 text-sm text-panel-muted">
             Escolha uma tecnologia, ou clique numa barra dos gráficos, para ver o que costuma vir com ela.
           </p>
         </div>
@@ -46,7 +46,7 @@ export function TechExplorer({ jobs, options, selected, onSelect, delay = 0 }: T
             name="tecnologia"
             value={selected}
             onChange={(event) => onSelect(event.target.value)}
-            className={`rounded-md border border-zinc-300 bg-white px-2 py-1.5 text-sm text-zinc-900 dark:bg-zinc-900 dark:text-zinc-100 dark:border-zinc-700 ${focusRing}`}
+            className={`rounded-md border border-white/25 bg-panel px-2 py-1.5 text-sm text-panel-ink ${focusRing}`}
           >
             {options.map((option) => (
               <option key={option} value={option}>
@@ -59,17 +59,17 @@ export function TechExplorer({ jobs, options, selected, onSelect, delay = 0 }: T
 
       <div className="mt-6 grid gap-8 md:grid-cols-[minmax(0,2fr)_minmax(0,3fr)]">
         <div>
-          <p className="text-3xl font-bold">{selected}</p>
-          <p className="mt-1 text-sm text-zinc-600 dark:text-zinc-400">
+          <p className="font-display text-4xl font-bold [font-stretch:115%]">{selected}</p>
+          <p className="mt-1 text-sm text-panel-muted">
             Pedido em {jobsLabel(total)}, {shareLabel(total, jobs.length)} das vagas.
           </p>
           <dl className="mt-4 grid grid-cols-2 gap-3">
-            <div className="flex flex-col rounded-lg bg-zinc-50 p-3 dark:bg-zinc-800/60">
-              <dt className="text-xs text-zinc-600 dark:text-zinc-400">Remotas</dt>
+            <div className="flex flex-col rounded-lg bg-white/8 p-3">
+              <dt className="text-xs text-panel-muted">Remotas</dt>
               <dd className="order-first text-xl font-semibold tabular-nums">{percent(remote, total)}%</dd>
             </div>
-            <div className="flex flex-col rounded-lg bg-zinc-50 p-3 dark:bg-zinc-800/60">
-              <dt className="text-xs text-zinc-600 dark:text-zinc-400">Júnior</dt>
+            <div className="flex flex-col rounded-lg bg-white/8 p-3">
+              <dt className="text-xs text-panel-muted">Júnior</dt>
               <dd className="order-first text-xl font-semibold tabular-nums">{junior}</dd>
             </div>
           </dl>
@@ -77,7 +77,7 @@ export function TechExplorer({ jobs, options, selected, onSelect, delay = 0 }: T
             href={`https://www.itjobs.pt/emprego?q=${encodeURIComponent(selected)}`}
             target="_blank"
             rel="noopener noreferrer"
-            className={`mt-4 inline-flex min-h-6 items-center gap-1 text-sm font-medium text-violet-700 underline-offset-4 hover:underline dark:text-violet-300 ${focusRing}`}
+            className={`mt-4 inline-flex min-h-6 items-center gap-1 text-sm font-medium text-panel-signal-strong underline underline-offset-4 hover:no-underline ${focusRing}`}
           >
             Procurar vagas de {selected} no itjobs.pt
             <span aria-hidden="true">↗</span>
@@ -98,11 +98,11 @@ export function TechExplorer({ jobs, options, selected, onSelect, delay = 0 }: T
               return (
                 <li key={item.label} className="grid grid-cols-[6.5rem_minmax(0,1fr)_3rem] items-center gap-3 text-sm">
                   <span className="truncate text-right">{item.label}</span>
-                  <span aria-hidden="true" className="h-3 overflow-hidden rounded-full bg-zinc-100 dark:bg-zinc-800">
+                  <span aria-hidden="true" className="h-2.5 overflow-hidden rounded-full bg-white/12">
                     <span
                       style={{ width: `${share}%` }}
                       className={`block h-full rounded-full motion-safe:transition-[width] motion-safe:duration-500 ${
-                        index === 0 ? 'bg-violet-700 dark:bg-violet-300' : 'bg-violet-500'
+                        index === 0 ? 'bg-panel-signal-strong' : 'bg-panel-signal'
                       }`}
                     />
                   </span>

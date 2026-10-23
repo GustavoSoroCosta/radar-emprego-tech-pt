@@ -1,10 +1,17 @@
 import type { Metadata } from "next";
-import { Geist } from "next/font/google";
+import { Archivo, Geist } from "next/font/google";
 import "./globals.css";
 
 const geistSans = Geist({
   variable: "--font-geist-sans",
   subsets: ["latin"],
+});
+
+// The width axis lets the title and the numbers be set wide without a second display font.
+const archivo = Archivo({
+  variable: "--font-archivo",
+  subsets: ["latin"],
+  axes: ["wdth"],
 });
 
 const title = "Radar do Emprego Tech PT";
@@ -23,7 +30,7 @@ export default function RootLayout({ children }: LayoutProps<"/">) {
   return (
     <html
       lang="pt-PT"
-      className={`${geistSans.variable} h-full antialiased`}
+      className={`${geistSans.variable} ${archivo.variable} h-full antialiased`}
     >
       <body className="min-h-full flex flex-col font-sans">{children}</body>
     </html>

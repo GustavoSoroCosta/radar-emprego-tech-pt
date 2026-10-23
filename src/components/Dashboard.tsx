@@ -99,7 +99,7 @@ function DashboardView({
   }
 
   const explorer = selected && (
-    <TechExplorer jobs={visible} options={technologies} selected={selected} onSelect={pick} delay={400} />
+    <TechExplorer jobs={visible} options={technologies} selected={selected} onSelect={pick} />
   )
   const cityChart = (
     <BarChart
@@ -114,7 +114,7 @@ function DashboardView({
   return (
     <>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <p role="status" aria-live="polite" className="text-sm text-zinc-600 dark:text-zinc-400">
+        <p role="status" aria-live="polite" className="text-sm text-muted">
           A mostrar {jobsLabel(total)}
           {areaName}.
         </p>
@@ -122,12 +122,14 @@ function DashboardView({
       </div>
 
       {total === 0 ? (
-        <p className="rounded-xl border border-dashed border-zinc-300 bg-white p-8 text-center text-zinc-600 dark:border-zinc-700 dark:bg-zinc-900/50 dark:text-zinc-400">
+        <p className="rounded-lg border border-dashed border-line bg-card p-8 text-center text-muted">
           Nenhuma vaga com estes filtros. Experimente limpar algum.
         </p>
       ) : (
         <>
-          <dl className="mb-6 grid grid-cols-2 gap-4 md:grid-cols-4">
+          {/* One strip of readings with hairline dividers (the 1px gap shows the line colour behind),
+              rather than four separate boxes. */}
+          <dl className="mb-6 grid grid-cols-2 gap-px overflow-hidden rounded-lg border border-line bg-line md:grid-cols-4">
             <StatCard
               label="Vagas"
               value={total}

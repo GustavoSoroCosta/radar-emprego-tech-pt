@@ -24,7 +24,7 @@ export function CopyLinkButton() {
       <button
         type="button"
         onClick={copy}
-        className="inline-flex shrink-0 touch-manipulation items-center gap-1.5 rounded-full border border-zinc-300 px-3 py-1 text-xs text-zinc-700 transition-colors hover:bg-zinc-100 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500 dark:border-zinc-700 dark:text-zinc-300 dark:hover:bg-zinc-800"
+        className="inline-flex shrink-0 touch-manipulation items-center gap-1.5 rounded-full border border-line bg-card px-3 py-1 text-xs text-muted transition-colors hover:border-ink/40 hover:text-ink focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
       >
         <svg viewBox="0 0 16 16" aria-hidden="true" className="size-3.5 fill-none stroke-current" strokeWidth="1.6">
           {copied ? (

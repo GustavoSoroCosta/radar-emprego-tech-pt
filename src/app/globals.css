@@ -1,32 +1,72 @@
 @import "tailwindcss";
 
-/* color-scheme tells the browser which theme its own widgets use (select lists, scrollbars),
-   otherwise a dark page opens light dropdowns with the page's light text on white. */
+/*
+  Palette: ink and sea. The page is a sonar reading of the Portuguese job market, so the colours
+  come from the Atlantic rather than the usual violet: a cool paper, a navy ink and a sea teal
+  "signal". Every text pair keeps at least 4.5:1 and every bar at least 3:1, in both themes.
+
+  color-scheme tells the browser which theme its own widgets use (select lists, scrollbars),
+  otherwise a dark page opens light dropdowns with the page's light text on white.
+*/
 :root {
-  --background: #fafafa;
-  --foreground: #171717;
+  --paper: #f4f6f7;
+  --card: #ffffff;
+  --ink: #102231;
+  --muted: #4b5a66;
+  --line: #dce3e7;
+  --signal: #0e7c86;
+  --signal-strong: #0a5a62;
+  --neutral: #74838e;
+  /* The one bold block (the explorer): a navy panel in both themes. */
+  --panel: #102231;
+  --panel-ink: #eef4f7;
+  --panel-muted: #a9bccb;
+  --panel-signal: #5cc4c8;
+  --panel-signal-strong: #a6e6e4;
   color-scheme: light;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
+@media (prefers-color-scheme: dark) {
+  :root {
+    --paper: #0d1a24;
+    --card: #13232f;
+    --ink: #e6eef2;
+    --muted: #9fb0bc;
+    --line: #22384a;
+    --signal: #5cc4c8;
+    --signal-strong: #a6e6e4;
+    --neutral: #7b8f9d;
+    --panel: #173149;
+    color-scheme: dark;
+  }
 }
 
-/* Used through motion-safe:, so nothing moves for people who ask the system for reduced motion. */
+@theme inline {
+  --color-paper: var(--paper);
+  --color-card: var(--card);
+  --color-ink: var(--ink);
+  --color-muted: var(--muted);
+  --color-line: var(--line);
+  --color-signal: var(--signal);
+  --color-signal-strong: var(--signal-strong);
+  --color-neutral: var(--neutral);
+  --color-panel: var(--panel);
+  --color-panel-ink: var(--panel-ink);
+  --color-panel-muted: var(--panel-muted);
+  --color-panel-signal: var(--panel-signal);
+  --color-panel-signal-strong: var(--panel-signal-strong);
+  --font-sans: var(--font-geist-sans);
+  /* Archivo, set wide, for the title and the big numbers: the look of an instrument readout. */
+  --font-display: var(--font-archivo);
+}
+
+/* Used through motion-safe:, so nothing moves for people who ask the system for reduced motion.
+   Only what answers the data moves: bars grow, numbers count, the radar sweeps once. */
 @theme {
-  --animate-rise: rise 0.5s cubic-bezier(0.22, 1, 0.36, 1) backwards;
   --animate-grow: grow 0.7s cubic-bezier(0.22, 1, 0.36, 1) backwards;
   --animate-fade: fade 0.4s ease-out backwards;
-  --animate-float: float 14s ease-in-out infinite;
+  --animate-sweep: sweep 1.8s cubic-bezier(0.33, 0, 0.2, 1) both;
 
-  @keyframes rise {
-    from {
-      opacity: 0;
-      transform: translateY(12px);
-    }
-  }
   @keyframes grow {
     from {
       transform: scaleX(0);
@@ -37,18 +77,15 @@
       opacity: 0;
     }
   }
-  @keyframes float {
-    50% {
-      transform: translate(24px, -18px) scale(1.08);
+  @keyframes sweep {
+    from {
+      transform: rotate(-90deg);
+      opacity: 1;
     }
-  }
-}
-
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-    color-scheme: dark;
+    to {
+      transform: rotate(270deg);
+      opacity: 0;
+    }
   }
 }
 
@@ -60,6 +97,6 @@
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  background: var(--paper);
+  color: var(--ink);
 }
