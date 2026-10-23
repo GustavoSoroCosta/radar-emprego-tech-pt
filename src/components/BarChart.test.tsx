@@ -63,6 +63,12 @@ describe('BarChart', () => {
     expect(onSelect).toHaveBeenCalledWith('Vue')
   })
 
+  it('says why the card is empty instead of drawing nothing', () => {
+    render(<BarChart title="T" data={[]} total={3} empty="Nenhuma tecnologia da lista aparece nestas vagas." />)
+    expect(screen.getByText('Nenhuma tecnologia da lista aparece nestas vagas.')).toBeInTheDocument()
+    expect(screen.queryByRole('table')).not.toBeInTheDocument()
+  })
+
   it('states how many jobs the chart is based on', () => {
     render(<BarChart title="T" data={data} total={10} />)
     expect(screen.getByText('Base: 10 vagas.')).toBeInTheDocument()

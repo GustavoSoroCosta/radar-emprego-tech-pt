@@ -14,6 +14,8 @@ interface BarChartProps {
   delay?: number
   /** Makes rows clickable (mouse shortcut; the explorer's select is the keyboard way). */
   onSelect?: (label: string) => void
+  /** Said instead of the bars when a filter leaves nothing to draw, so the card is never blank. */
+  empty?: string
 }
 
 const BAR_HEIGHT = 28
@@ -29,19 +31,29 @@ const DEFAULT_WIDTH = 400
  * and a visually hidden table carries the data. The SVG itself is hidden from
  * assistive tech so the numbers are not read twice.
  */
-export function BarChart({ title, data, total, labelHeader = 'Tecnologia', delay = 0, onSelect }: BarChartProps) {
+export function BarChart({
+  title,
+  data,
+  total,
+  labelHeader = 'Tecnologia',
+  delay = 0,
+  onSelect,
+  empty = 'Nada a mostrar com estes filtros.',
+}: BarChartProps) {
   const id = useId()
   const svgRef = useRef<SVGSVGElement>(null)
   const [measured, setMeasured] = useState(DEFAULT_WIDTH)
   const [hovered, setHovered] = useState<number | null>(null)
+  const hasBars = data.length > 0
 
+  // Runs again when the bars come back after an empty view, since the svg did not exist before.
   useEffect(() => {
     const svg = svgRef.current
     if (!svg || typeof ResizeObserver === 'undefined') return
     const observer = new ResizeObserver(([entry]) => setMeasured(Math.round(entry.contentRect.width)))
     observer.observe(svg)
     return () => observer.disconnect()
-  }, [])
+  }, [hasBars])
 
   // WCAG 1.4.13: the tooltip covers the row above, so Escape must close it without moving the mouse.
   const tooltipOpen = hovered !== null
@@ -74,108 +86,113 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia', delay
         </h2>
         {/* The takeaway in words, as data journalism does, so the reader does not have to work it out. */}
         {insight && <p className="mt-1 text-sm">{insight}</p>}
+        {!hasBars && <p className="mt-1 text-sm">{empty}</p>}
         <p className="mb-2 text-xs text-muted">Base: {jobsLabel(total)}.</p>
       </figcaption>
-      {/* Hovering a row dims the others and shows its job count. Mouse only: the same numbers are
-          in the table for screen readers, so this adds no information that is missing elsewhere. */}
-      <div className="relative" onPointerLeave={() => setHovered(null)}>
-        <svg ref={svgRef} viewBox={`0 0 ${width} ${height}`} aria-hidden="true" className="w-full text-sm">
-          {/* Positions go through CSS (style) rather than SVG attributes so they can be transitioned
-            when the filters change; motion-safe turns the animation off for prefers-reduced-motion. */}
-          {data.map((d, index) => (
-            <g
-              key={d.label}
-              style={{ transform: `translateY(${y(d.label)}px)` }}
-              // Mouse only: on a touch screen there is no "leave", so a tap would leave the chart
-              // dimmed with the tooltip stuck open.
-              onPointerEnter={(event) => event.pointerType === 'mouse' && setHovered(index)}
-              onClick={onSelect && (() => onSelect(d.label))}
-              className={`transition-opacity motion-safe:transition-[transform,opacity] motion-safe:duration-500 ${
-                hovered !== null && hovered !== index ? 'opacity-40' : ''
-              } ${onSelect ? 'cursor-pointer' : ''}`}
-            >
-              {/* Invisible hit area across the whole row, so the gaps between bars do not flicker. */}
-              <rect width={width} height={BAR_HEIGHT} y={-(BAR_HEIGHT - y.bandwidth()) / 2} fill="transparent" />
-              <text x={MARGIN.left - 8} y={y.bandwidth() / 2} dy="0.35em" textAnchor="end" className="fill-current">
-                {d.label}
-              </text>
-              <rect
-                x={MARGIN.left}
-                height={y.bandwidth()}
-                rx={3}
-                // On first paint each bar grows from the left, one row after the other; later
-                // filter changes animate the width instead.
+      {hasBars && (
+        <>
+          {/* Hovering a row dims the others and shows its job count. Mouse only: the same numbers are
+              in the table for screen readers, so this adds no information that is missing elsewhere. */}
+          <div className="relative" onPointerLeave={() => setHovered(null)}>
+            <svg ref={svgRef} viewBox={`0 0 ${width} ${height}`} aria-hidden="true" className="w-full text-sm">
+              {/* Positions go through CSS (style) rather than SVG attributes so they can be transitioned
+                when the filters change; motion-safe turns the animation off for prefers-reduced-motion. */}
+              {data.map((d, index) => (
+                <g
+                  key={d.label}
+                  style={{ transform: `translateY(${y(d.label)}px)` }}
+                  // Mouse only: on a touch screen there is no "leave", so a tap would leave the chart
+                  // dimmed with the tooltip stuck open.
+                  onPointerEnter={(event) => event.pointerType === 'mouse' && setHovered(index)}
+                  onClick={onSelect && (() => onSelect(d.label))}
+                  className={`transition-opacity motion-safe:transition-[transform,opacity] motion-safe:duration-500 ${
+                    hovered !== null && hovered !== index ? 'opacity-40' : ''
+                  } ${onSelect ? 'cursor-pointer' : ''}`}
+                >
+                  {/* Invisible hit area across the whole row, so the gaps between bars do not flicker. */}
+                  <rect width={width} height={BAR_HEIGHT} y={-(BAR_HEIGHT - y.bandwidth()) / 2} fill="transparent" />
+                  <text x={MARGIN.left - 8} y={y.bandwidth() / 2} dy="0.35em" textAnchor="end" className="fill-current">
+                    {d.label}
+                  </text>
+                  <rect
+                    x={MARGIN.left}
+                    height={y.bandwidth()}
+                    rx={3}
+                    // On first paint each bar grows from the left, one row after the other; later
+                    // filter changes animate the width instead.
+                    style={{
+                      width: x(d.count),
+                      transformBox: 'fill-box',
+                      transformOrigin: 'left',
+                      animationDelay: `${delay + 150 + index * 40}ms`,
+                    }}
+                    // The leader gets the darker shade, matching the sentence above the chart; catch-all
+                    // buckets are grey. Every shade keeps at least 3:1 against the card, in both themes.
+                    className={`motion-safe:animate-grow motion-safe:transition-[width] motion-safe:duration-500 ${
+                      d.muted ? 'fill-neutral' : index === 0 ? 'fill-leader' : 'fill-signal'
+                    }`}
+                  />
+                  <text
+                    x={MARGIN.left + 6}
+                    y={y.bandwidth() / 2}
+                    dy="0.35em"
+                    style={{
+                      transform: `translateX(${x(d.count)}px)`,
+                      animationDelay: `${delay + 500 + index * 40}ms`,
+                    }}
+                    className="fill-current motion-safe:animate-fade motion-safe:transition-transform motion-safe:duration-500"
+                  >
+                    {shareLabel(d.count, total)}
+                  </text>
+                </g>
+              ))}
+            </svg>
+            {hovered !== null && data[hovered] && (
+              <div
+                aria-hidden="true"
+                // The viewBox matches the rendered width, so SVG units are pixels here. Centred over the
+                // bar, but kept inside the card so it never gets cut off at either edge. It takes the
+                // pointer, so moving the mouse onto it keeps it open instead of hovering the row below.
+                // It covers the row above, so a click on it does what it says rather than nothing.
                 style={{
-                  width: x(d.count),
-                  transformBox: 'fill-box',
-                  transformOrigin: 'left',
-                  animationDelay: `${delay + 150 + index * 40}ms`,
+                  top: (y(data[hovered].label) ?? 0) - (onSelect ? 44 : 30),
+                  left: Math.min(Math.max(MARGIN.left + x(data[hovered].count) / 2, 100), width - 100),
                 }}
-                // The leader gets the darker shade, matching the sentence above the chart; catch-all
-                // buckets are grey. Every shade keeps at least 3:1 against the card, in both themes.
-                className={`motion-safe:animate-grow motion-safe:transition-[width] motion-safe:duration-500 ${
-                  d.muted ? 'fill-neutral' : index === 0 ? 'fill-leader' : 'fill-signal'
+                onClick={onSelect && (() => onSelect(data[hovered].label))}
+                className={`absolute z-10 -translate-x-1/2 rounded-md bg-ink px-2.5 py-1.5 text-center text-xs whitespace-nowrap text-paper shadow-lg motion-safe:animate-fade ${
+                  onSelect ? 'cursor-pointer' : ''
                 }`}
-              />
-              <text
-                x={MARGIN.left + 6}
-                y={y.bandwidth() / 2}
-                dy="0.35em"
-                style={{
-                  transform: `translateX(${x(d.count)}px)`,
-                  animationDelay: `${delay + 500 + index * 40}ms`,
-                }}
-                className="fill-current motion-safe:animate-fade motion-safe:transition-transform motion-safe:duration-500"
               >
-                {shareLabel(d.count, total)}
-              </text>
-            </g>
-          ))}
-        </svg>
-        {hovered !== null && data[hovered] && (
-          <div
-            aria-hidden="true"
-            // The viewBox matches the rendered width, so SVG units are pixels here. Centred over the
-            // bar, but kept inside the card so it never gets cut off at either edge. It takes the
-            // pointer, so moving the mouse onto it keeps it open instead of hovering the row below.
-            // It covers the row above, so a click on it does what it says rather than nothing.
-            style={{
-              top: (y(data[hovered].label) ?? 0) - (onSelect ? 44 : 30),
-              left: Math.min(Math.max(MARGIN.left + x(data[hovered].count) / 2, 100), width - 100),
-            }}
-            onClick={onSelect && (() => onSelect(data[hovered].label))}
-            className={`absolute z-10 -translate-x-1/2 rounded-md bg-ink px-2.5 py-1.5 text-center text-xs whitespace-nowrap text-paper shadow-lg motion-safe:animate-fade ${
-              onSelect ? 'cursor-pointer' : ''
-            }`}
-          >
-            <span className="font-semibold">{data[hovered].label}</span>: {jobsLabel(data[hovered].count)} (
-            {shareLabel(data[hovered].count, total)})
-            {onSelect && <span className="block text-[11px] opacity-75">Clique para explorar</span>}
+                <span className="font-semibold">{data[hovered].label}</span>: {jobsLabel(data[hovered].count)} (
+                {shareLabel(data[hovered].count, total)})
+                {onSelect && <span className="block text-[11px] opacity-75">Clique para explorar</span>}
+              </div>
+            )}
           </div>
-        )}
-      </div>
-      {/* sr-only goes on a wrapper: a table never shrinks to 1px, so with larger text spacing it
-          pushed the page wider than the screen. */}
-      <div className="sr-only">
-        <table aria-labelledby={id}>
-          <thead>
-            <tr>
-              <th scope="col">{labelHeader}</th>
-              <th scope="col">% das vagas</th>
-              <th scope="col">Vagas</th>
-            </tr>
-          </thead>
-          <tbody>
-            {data.map((d) => (
-              <tr key={d.label}>
-                <th scope="row">{d.label}</th>
-                <td>{shareLabel(d.count, total)}</td>
-                <td>{d.count}</td>
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      </div>
+          {/* sr-only goes on a wrapper: a table never shrinks to 1px, so with larger text spacing it
+              pushed the page wider than the screen. */}
+          <div className="sr-only">
+            <table aria-labelledby={id}>
+              <thead>
+                <tr>
+                  <th scope="col">{labelHeader}</th>
+                  <th scope="col">% das vagas</th>
+                  <th scope="col">Vagas</th>
+                </tr>
+              </thead>
+              <tbody>
+                {data.map((d) => (
+                  <tr key={d.label}>
+                    <th scope="row">{d.label}</th>
+                    <td>{shareLabel(d.count, total)}</td>
+                    <td>{d.count}</td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          </div>
+        </>
+      )}
     </figure>
   )
 }
