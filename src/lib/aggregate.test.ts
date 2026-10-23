@@ -4,7 +4,6 @@ import {
   countBy,
   countCompanies,
   countTechnologies,
-  countWorkModes,
   jobsLabel,
   percent,
   relatedTechnologies,
@@ -53,16 +52,6 @@ describe('countBy', () => {
     expect(result).toEqual([
       { label: 'Porto', count: 2 },
       { label: 'Lisboa', count: 1 },
-    ])
-  })
-})
-
-describe('countWorkModes', () => {
-  it('uses Portuguese labels and counts jobs without a work mode', () => {
-    const result = countWorkModes([job({ workMode: 'hybrid' }), job({ workMode: 'hybrid' }), job({ workMode: null })])
-    expect(result).toEqual([
-      { label: 'Híbrido', count: 2 },
-      { label: 'Não indicado', count: 1 },
     ])
   })
 })

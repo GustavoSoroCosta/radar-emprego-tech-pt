@@ -21,7 +21,6 @@ export interface ItjobsJob {
   body: string
   company: { id: number; name: string }
   locations?: ItjobsNamed[]
-  types?: ItjobsNamed[]
   workModel?: unknown // format not documented; checked against real data before use
   publishedAt: string
   slug?: string

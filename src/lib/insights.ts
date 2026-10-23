@@ -1,6 +1,6 @@
 import { percent, type CountItem } from './aggregate'
 
-/** Below this many jobs a ranking is mostly noise, so the chart warns the reader. */
+/** Below this many jobs a ranking is mostly noise; the methodology tells readers to take care. */
 export const SMALL_SAMPLE = 30
 
 /** Share of `count` in `total` for display; "<1%" instead of a misleading "0%" for rare items. */

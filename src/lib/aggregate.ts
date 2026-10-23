@@ -70,10 +70,6 @@ export function countCompanies(jobs: Job[]): number {
   return new Set(jobs.map((job) => job.company).filter(Boolean)).size
 }
 
-export function countWorkModes(jobs: Job[]): CountItem[] {
-  return countBy(jobs, (job) => [job.workMode ? WORK_MODE_LABELS[job.workMode] : 'Não indicado'])
-}
-
 /** "1 vaga" / "3 vagas": the count with the right Portuguese plural. */
 export function jobsLabel(count: number): string {
   return `${count} ${count === 1 ? 'vaga' : 'vagas'}`
