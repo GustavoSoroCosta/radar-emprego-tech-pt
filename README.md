@@ -20,6 +20,11 @@ remote, hybrid or on-site. It uses real, daily-updated data from the [itjobs.pt]
   shows percentages with the number of jobs behind them.
 - A technology explorer: pick a technology, or click its bar, to see what the same job ads also ask for
   ("Quem pede React também pede JavaScript em 54% dos casos"), with a link to those jobs on itjobs.pt.
+- "Ver as vagas" opens the jobs behind the numbers, newest first and ten at a time, each linking to its ad
+  on itjobs.pt. The list follows the filters, so "4 vagas em Braga, híbridas" really shows those four.
+- Light and dark themes: the page follows the system until the visitor picks one, and the pick is applied
+  before the first paint, so the wrong theme never flashes. Phone browsers that force their own dark mode
+  are told the page already has one.
 - A "how the data is handled" section explains the rules and their limits.
 
 ## How it works
@@ -38,10 +43,11 @@ remote, hybrid or on-site. It uses real, daily-updated data from the [itjobs.pt]
 
 ## Accessibility
 
-Lighthouse scores 100 in light and dark mode, on desktop and mobile. Beyond that it was checked by hand:
-keyboard-only use, Windows high contrast mode, a 320px wide screen and the heading structure. Each chart has
-an `h2` and a visually hidden table with the same data; filter buttons expose their state with
-`aria-pressed`, and the job count is announced to screen readers when the filters change.
+Lighthouse scores 100 in light and dark mode, on desktop and mobile. Beyond that it was checked by hand
+against WCAG 2.2 AA: keyboard-only use, Windows high contrast mode, a 320px wide screen, larger text spacing
+and the heading structure. Each chart has an `h2` and a visually hidden table with the same data; filter
+and theme buttons expose their state with `aria-pressed`, the job count is announced to screen readers when
+the filters change, and the chart tooltip closes with Escape.
 
 ## Stack
 
@@ -60,5 +66,6 @@ Without an API key, or if the API fails, the page falls back to sample data and 
 
 ## Data
 
-Data from [itjobs.pt](https://www.itjobs.pt), used with their permission. Only aggregated numbers are shown;
-individual job ads are not republished.
+Data from [itjobs.pt](https://www.itjobs.pt), used with their permission. The charts show aggregated numbers.
+The job list shows only each ad's title, company, place and date, and links to the original ad on itjobs.pt;
+the text of the ads is not republished.
