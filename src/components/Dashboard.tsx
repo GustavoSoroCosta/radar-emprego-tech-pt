@@ -4,6 +4,7 @@ import { useMemo, useSyncExternalStore } from 'react'
 import { BarChart } from '@/components/BarChart'
 import { CopyLinkButton } from '@/components/CopyLinkButton'
 import { FilterBar } from '@/components/FilterBar'
+import { JobList } from '@/components/JobList'
 import { StatCard } from '@/components/StatCard'
 import { TechExplorer } from '@/components/TechExplorer'
 import { countAreas, countBy, countCompanies, countTechnologies, jobsLabel, percent } from '@/lib/aggregate'
@@ -114,10 +115,21 @@ function DashboardView({
   return (
     <>
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
-        <p role="status" aria-live="polite" className="text-sm text-muted">
-          A mostrar {jobsLabel(total)}
-          {areaName}.
-        </p>
+        <div className="flex flex-wrap items-baseline gap-x-3 gap-y-1">
+          <p role="status" aria-live="polite" className="text-sm text-muted">
+            A mostrar {jobsLabel(total)}
+            {areaName}.
+          </p>
+          {/* Outside the status on purpose, so filter changes are not announced with a link in them. */}
+          {total > 0 && (
+            <a
+              href="#vagas"
+              className="text-sm text-ink underline underline-offset-2 hover:no-underline focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-signal"
+            >
+              Ver as vagas
+            </a>
+          )}
+        </div>
         <CopyLinkButton />
       </div>
 
@@ -197,6 +209,9 @@ function DashboardView({
               </>
             )}
           </div>
+
+          {/* Keyed by the filters, so a new view starts again from its ten newest jobs. */}
+          <JobList key={`${filters.area}-${filters.city}-${filters.workMode}`} jobs={visible} />
         </>
       )}
     </>

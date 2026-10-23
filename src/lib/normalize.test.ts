@@ -137,6 +137,7 @@ describe('toJob', () => {
       locations: [{ id: 18, name: 'Porto' }],
       workModel: 2,
       publishedAt: '2026-10-17 14:05:00',
+      slug: 'junior-react-developer',
     })
     expect(job).toEqual({
       id: 7,
@@ -148,6 +149,12 @@ describe('toJob', () => {
       junior: true,
       area: 'frontend',
       publishedAt: '2026-10-17 14:05:00',
+      url: 'https://www.itjobs.pt/oferta/7/junior-react-developer',
     })
+  })
+
+  it('leaves out the link when the API sends no slug', () => {
+    const job = toJob({ id: 7, title: 'Dev', body: '', company: { id: 1, name: 'E' }, publishedAt: '2026-10-17' })
+    expect(job.url).toBeUndefined()
   })
 })

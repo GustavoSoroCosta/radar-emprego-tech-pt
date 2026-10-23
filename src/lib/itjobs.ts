@@ -24,6 +24,7 @@ export interface ItjobsJob {
   types?: ItjobsNamed[]
   workModel?: unknown // format not documented; checked against real data before use
   publishedAt: string
+  slug?: string
 }
 
 interface ListResponse {

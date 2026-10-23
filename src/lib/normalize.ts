@@ -127,5 +127,7 @@ export function toJob(raw: ItjobsJob): Job {
     junior: isJunior(raw.title),
     area: classifyArea(raw.title, technologies),
     publishedAt: raw.publishedAt,
+    // Same address the ads have on itjobs.pt; the slug comes from their API, so it is escaped.
+    url: raw.slug ? `https://www.itjobs.pt/oferta/${raw.id}/${encodeURIComponent(raw.slug)}` : undefined,
   }
 }

@@ -12,5 +12,7 @@ export interface Job {
   technologies: string[]
   junior: boolean
   area: Area
-  publishedAt: string // ISO date
+  publishedAt: string // starts with YYYY-MM-DD; itjobs adds the time ("2026-10-17 14:05:00")
+  /** The ad on itjobs.pt. Missing for the sample data, which are not real jobs. */
+  url?: string
 }
