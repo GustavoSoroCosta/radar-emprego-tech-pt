@@ -31,6 +31,8 @@ export function FilterBar({ filters, cities, onChange }: FilterBarProps) {
   const set = (changes: Partial<Filters>) => onChange({ ...filters, ...changes })
   // Only offered when there is something to clear, so it never sits alone on an empty row.
   const filtered = filters.area !== 'all' || filters.city !== null || filters.workMode !== null
+  // A shared link can name a city outside today's top list; offer it too, or the select would say "Todas".
+  const cityOptions = filters.city && !cities.includes(filters.city) ? [...cities, filters.city] : cities
 
   return (
     // On wider screens the filters stay pinned while scrolling through the charts. The frosted
@@ -68,7 +70,7 @@ export function FilterBar({ filters, cities, onChange }: FilterBarProps) {
             onChange={(event) => set({ city: event.target.value || null })}
           >
             <option value="">Todas</option>
-            {cities.map((city) => (
+            {cityOptions.map((city) => (
               <option key={city} value={city}>
                 {city}
               </option>
