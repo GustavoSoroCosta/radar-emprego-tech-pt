@@ -23,7 +23,9 @@
   --panel-muted: #a9bccb;
   --panel-signal: #5cc4c8;
   --panel-signal-strong: #a6e6e4;
-  color-scheme: light;
+  /* "only" stops Chrome's "dark theme for sites" from darkening the light theme on its own, which
+     made labels and bars unreadable on phones. The page has a real dark theme below. */
+  color-scheme: only light;
 }
 
 @media (prefers-color-scheme: dark) {
