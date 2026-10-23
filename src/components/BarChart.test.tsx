@@ -1,4 +1,4 @@
-import { act, render, screen } from '@testing-library/react'
+import { act, fireEvent, render, screen } from '@testing-library/react'
 import { describe, expect, it, vi } from 'vitest'
 import { BarChart } from './BarChart'
 
@@ -44,6 +44,15 @@ describe('BarChart', () => {
     act(() => resize([{ contentRect: { width: 286 } } as ResizeObserverEntry], {} as ResizeObserver))
     expect(container.querySelector('svg')?.getAttribute('viewBox')).toMatch(/^0 0 286 /)
     vi.unstubAllGlobals()
+  })
+
+  it('shows the count on mouse hover and closes it with Escape (WCAG 1.4.13)', () => {
+    const { container } = render(<BarChart title="T" data={data} total={10} />)
+    fireEvent.pointerEnter(container.querySelector('svg g')!, { pointerType: 'mouse' })
+    expect(screen.getByText(/5 vagas \(50%\)/)).toBeInTheDocument()
+
+    fireEvent.keyDown(window, { key: 'Escape' })
+    expect(screen.queryByText(/5 vagas \(50%\)/)).not.toBeInTheDocument()
   })
 
   it('states how many jobs the chart is based on', () => {

@@ -43,6 +43,15 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia', delay
     return () => observer.disconnect()
   }, [])
 
+  // WCAG 1.4.13: the tooltip covers the row above, so Escape must close it without moving the mouse.
+  const tooltipOpen = hovered !== null
+  useEffect(() => {
+    if (!tooltipOpen) return
+    const close = (event: KeyboardEvent) => event.key === 'Escape' && setHovered(null)
+    window.addEventListener('keydown', close)
+    return () => window.removeEventListener('keydown', close)
+  }, [tooltipOpen])
+
   // Never narrower than the label column plus a little room for the bars.
   const width = Math.max(measured, MARGIN.left + MARGIN.right + 60)
   const height = MARGIN.top + MARGIN.bottom + data.length * BAR_HEIGHT
@@ -127,12 +136,13 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia', delay
           <div
             aria-hidden="true"
             // The viewBox matches the rendered width, so SVG units are pixels here. Centred over the
-            // bar, but kept inside the card so it never gets cut off at either edge.
+            // bar, but kept inside the card so it never gets cut off at either edge. It takes the
+            // pointer, so moving the mouse onto it keeps it open instead of hovering the row below.
             style={{
               top: (y(data[hovered].label) ?? 0) - (onSelect ? 44 : 30),
               left: Math.min(Math.max(MARGIN.left + x(data[hovered].count) / 2, 100), width - 100),
             }}
-            className="pointer-events-none absolute z-10 -translate-x-1/2 rounded-md bg-ink px-2.5 py-1.5 text-center text-xs whitespace-nowrap text-paper shadow-lg motion-safe:animate-fade"
+            className="absolute z-10 -translate-x-1/2 rounded-md bg-ink px-2.5 py-1.5 text-center text-xs whitespace-nowrap text-paper shadow-lg motion-safe:animate-fade"
           >
             <span className="font-semibold">{data[hovered].label}</span>: {jobsLabel(data[hovered].count)} (
             {shareLabel(data[hovered].count, total)})
@@ -140,24 +150,28 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia', delay
           </div>
         )}
       </div>
-      <table aria-labelledby={id} className="sr-only">
-        <thead>
-          <tr>
-            <th scope="col">{labelHeader}</th>
-            <th scope="col">% das vagas</th>
-            <th scope="col">Vagas</th>
-          </tr>
-        </thead>
-        <tbody>
-          {data.map((d) => (
-            <tr key={d.label}>
-              <th scope="row">{d.label}</th>
-              <td>{shareLabel(d.count, total)}</td>
-              <td>{d.count}</td>
+      {/* sr-only goes on a wrapper: a table never shrinks to 1px, so with larger text spacing it
+          pushed the page wider than the screen. */}
+      <div className="sr-only">
+        <table aria-labelledby={id}>
+          <thead>
+            <tr>
+              <th scope="col">{labelHeader}</th>
+              <th scope="col">% das vagas</th>
+              <th scope="col">Vagas</th>
             </tr>
-          ))}
-        </tbody>
-      </table>
+          </thead>
+          <tbody>
+            {data.map((d) => (
+              <tr key={d.label}>
+                <th scope="row">{d.label}</th>
+                <td>{shareLabel(d.count, total)}</td>
+                <td>{d.count}</td>
+              </tr>
+            ))}
+          </tbody>
+        </table>
+      </div>
     </figure>
   )
 }

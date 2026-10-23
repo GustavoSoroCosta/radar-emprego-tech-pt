@@ -120,7 +120,8 @@ export function toJob(raw: ItjobsJob): Job {
     id: raw.id,
     title: raw.title,
     company: raw.company?.name ?? '',
-    cities: (raw.locations ?? []).map((l) => l.name),
+    // itjobs names jobs abroad in English; the page is in Portuguese (WCAG 3.1.2, language of parts).
+    cities: (raw.locations ?? []).map((l) => (l.name === 'International' ? 'Internacional' : l.name)),
     workMode: toWorkMode(raw.workModel),
     technologies,
     junior: isJunior(raw.title),
