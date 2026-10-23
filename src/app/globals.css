@@ -15,7 +15,6 @@
   --muted: #4b5a66;
   --line: #dce3e7;
   --signal: #0e7c86;
-  --signal-strong: #0a5a62;
   --neutral: #74838e;
   /* The one bold block (the explorer): a navy panel in both themes. */
   --panel: #102231;
@@ -23,24 +22,44 @@
   --panel-muted: #a9bccb;
   --panel-signal: #5cc4c8;
   --panel-signal-strong: #a6e6e4;
+  /* The leading bar of each chart: ink on the light page, the bright teal on the dark one. */
+  --leader: var(--ink);
   /* "only" stops Chrome's "dark theme for sites" from darkening the light theme on its own, which
      made labels and bars unreadable on phones. The page has a real dark theme below. */
   color-scheme: only light;
 }
 
+/*
+  Dark theme, reached two ways: the system asks for it (and the visitor has not picked light with
+  the theme button), or the visitor picked dark. The button sets data-theme on <html>. Keep both
+  blocks identical; CSS cannot share one rule between a media query and a plain selector.
+*/
 @media (prefers-color-scheme: dark) {
-  :root {
+  :root:not([data-theme="light"]) {
     --paper: #0d1a24;
     --card: #13232f;
     --ink: #e6eef2;
     --muted: #9fb0bc;
     --line: #22384a;
     --signal: #5cc4c8;
-    --signal-strong: #a6e6e4;
     --neutral: #7b8f9d;
     --panel: #173149;
+    --leader: #a6e6e4;
     color-scheme: dark;
   }
+}
+
+:root[data-theme="dark"] {
+  --paper: #0d1a24;
+  --card: #13232f;
+  --ink: #e6eef2;
+  --muted: #9fb0bc;
+  --line: #22384a;
+  --signal: #5cc4c8;
+  --neutral: #7b8f9d;
+  --panel: #173149;
+  --leader: #a6e6e4;
+  color-scheme: dark;
 }
 
 @theme inline {
@@ -50,13 +69,13 @@
   --color-muted: var(--muted);
   --color-line: var(--line);
   --color-signal: var(--signal);
-  --color-signal-strong: var(--signal-strong);
   --color-neutral: var(--neutral);
   --color-panel: var(--panel);
   --color-panel-ink: var(--panel-ink);
   --color-panel-muted: var(--panel-muted);
   --color-panel-signal: var(--panel-signal);
   --color-panel-signal-strong: var(--panel-signal-strong);
+  --color-leader: var(--leader);
   --font-sans: var(--font-geist-sans);
   /* Archivo, set wide, for the title and the big numbers: the look of an instrument readout. */
   --font-display: var(--font-archivo);

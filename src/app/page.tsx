@@ -1,6 +1,7 @@
 import { Dashboard } from '@/components/Dashboard'
 import { Methodology } from '@/components/Methodology'
 import { RadarScope } from '@/components/RadarScope'
+import { ThemeToggle } from '@/components/ThemeToggle'
 import { getJobs } from '@/lib/jobs'
 
 // Rebuild the page at most once a day, matching the cache of the API calls.
@@ -18,7 +19,8 @@ export default async function Home() {
   )
 
   return (
-    <main className="mx-auto w-full max-w-5xl px-4 py-10 sm:py-14">
+    <main className="relative mx-auto w-full max-w-5xl px-4 py-10 sm:py-14 md:pt-20">
+      <ThemeToggle className="absolute top-3 right-4" />
       <header className="mb-10 grid items-center gap-8 md:grid-cols-[minmax(0,1fr)_auto]">
         <div>
           <h1 className="font-display text-4xl leading-[1.05] font-bold tracking-tight text-balance [font-stretch:115%] sm:text-5xl">
