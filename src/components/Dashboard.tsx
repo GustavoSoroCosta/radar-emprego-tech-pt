@@ -104,13 +104,20 @@ function DashboardView({
   const explorer = selected && (
     <TechExplorer jobs={visible} options={technologies} selected={selected} onSelect={pick} />
   )
+  // With a city chosen every job is in it, and a 100% bar says nothing. One ad can name several
+  // cities, so the chart then shows where the same jobs are also posted.
   const cityChart = (
     <BarChart
-      title="Vagas por cidade"
+      title={filters.city ? 'Também anunciadas noutras cidades' : 'Vagas por cidade'}
       labelHeader="Cidade"
-      data={countBy(visible, (job) => job.cities, 8)}
+      data={countBy(visible, (job) => job.cities.filter((city) => city !== filters.city), 8)}
       total={total}
       delay={filters.area === 'all' ? 560 : 320}
+      empty={
+        filters.city
+          ? 'Nenhuma: estas vagas não aparecem em mais nenhuma cidade.'
+          : 'Nenhuma destas vagas indica a cidade.'
+      }
     />
   )
 
@@ -193,6 +200,7 @@ function DashboardView({
               total={total}
               onSelect={explore}
               delay={240}
+              empty="Nenhuma tecnologia da lista aparece nestas vagas."
             />
             {filters.area === 'all' ? (
               <>
@@ -202,6 +210,11 @@ function DashboardView({
                   total={frontendJobs.length}
                   onSelect={explore}
                   delay={320}
+                  empty={
+                    frontendJobs.length === 0
+                      ? 'Não há vagas de frontend com estes filtros.'
+                      : 'Nenhuma tecnologia da lista aparece nestas vagas.'
+                  }
                 />
                 {explorer}
                 <BarChart
