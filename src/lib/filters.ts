@@ -6,14 +6,12 @@ export interface Filters {
   area: AreaFilter
   city: string | null
   workMode: WorkMode | null
-  /** "As minhas vagas": on-site in Viana do Castelo, hybrid in Porto or remote. Overrides city and work mode. */
-  mine: boolean
   /** Technology open in the explorer. Not a filter, but kept in the URL with the rest of the view so
       a reload, the back button or a shared link brings back the same pick. */
   tech: string | null
 }
 
-export const DEFAULT_FILTERS: Filters = { area: 'all', city: null, workMode: null, mine: false, tech: null }
+export const DEFAULT_FILTERS: Filters = { area: 'all', city: null, workMode: null, tech: null }
 
 const AREAS: AreaFilter[] = ['all', 'frontend', 'backend', 'fullstack', 'mobile', 'data', 'devops', 'qa', 'other']
 
@@ -23,18 +21,9 @@ const SLUG_TO_WORK_MODE = Object.fromEntries(
   Object.entries(WORK_MODE_SLUGS).map(([mode, slug]) => [slug, mode as WorkMode]),
 )
 
-export function isMine(job: Job): boolean {
-  return (
-    job.workMode === 'remote' ||
-    (job.workMode === 'hybrid' && job.cities.includes('Porto')) ||
-    (job.workMode === 'onsite' && job.cities.includes('Viana do Castelo'))
-  )
-}
-
 export function applyFilters(jobs: Job[], filters: Filters): Job[] {
   return jobs.filter((job) => {
     if (filters.area !== 'all' && job.area !== filters.area) return false
-    if (filters.mine) return isMine(job)
     if (filters.city && !job.cities.includes(filters.city)) return false
     if (filters.workMode && job.workMode !== filters.workMode) return false
     return true
@@ -48,7 +37,6 @@ export function filtersFromSearch(params: URLSearchParams): Filters {
     area: area && AREAS.includes(area) ? area : 'all',
     city: params.get('cidade') || null,
     workMode: SLUG_TO_WORK_MODE[params.get('regime') ?? ''] ?? null,
-    mine: params.get('minhas') === '1',
     // Checked against the technologies on screen by the dashboard, which falls back to the top one.
     tech: params.get('tecnologia') || null,
   }
@@ -58,11 +46,8 @@ export function filtersFromSearch(params: URLSearchParams): Filters {
 export function filtersToSearch(filters: Filters): string {
   const params = new URLSearchParams()
   if (filters.area !== 'all') params.set('area', filters.area)
-  if (filters.mine) params.set('minhas', '1')
-  else {
-    if (filters.city) params.set('cidade', filters.city)
-    if (filters.workMode) params.set('regime', WORK_MODE_SLUGS[filters.workMode])
-  }
+  if (filters.city) params.set('cidade', filters.city)
+  if (filters.workMode) params.set('regime', WORK_MODE_SLUGS[filters.workMode])
   if (filters.tech) params.set('tecnologia', filters.tech)
   const query = params.toString()
   return query ? `?${query}` : ''

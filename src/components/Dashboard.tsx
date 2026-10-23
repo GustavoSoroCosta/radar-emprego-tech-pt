@@ -116,8 +116,7 @@ function DashboardView({
       <div className="mb-6 flex flex-wrap items-center justify-between gap-3">
         <p role="status" aria-live="polite" className="text-sm text-zinc-600 dark:text-zinc-400">
           A mostrar {jobsLabel(total)}
-          {areaName}
-          {filters.mine && ' que encaixam nas minhas preferências'}.
+          {areaName}.
         </p>
         <CopyLinkButton />
       </div>

@@ -14,8 +14,8 @@ remote, hybrid or on-site. It uses real, daily-updated data from the [itjobs.pt]
 
 ## What it does
 
-- Filters by area (frontend, backend, fullstack, mobile, data, DevOps, QA), city and work model, plus a
-  shortcut for my own criteria. Filters live in the URL, so any view can be shared with one click.
+- Filters by area (frontend, backend, fullstack, mobile, data, DevOps, QA), city and work model. Filters
+  live in the URL, so any view can be shared with one click and survives a reload or the back button.
 - Every chart opens with a one-line takeaway written from the data ("SQL lidera, em 29% das vagas…") and
   shows percentages with the number of jobs behind them.
 - A technology explorer: pick a technology, or click its bar, to see what the same job ads also ask for
