@@ -18,7 +18,7 @@ export default async function Image() {
   const stats = [
     { value: String(jobs.length), label: 'vagas analisadas' },
     { value: `${percent(remoteOrHybrid, jobs.length)}%`, label: 'remotas ou híbridas' },
-    { value: topTechnologies.join(' · '), label: 'tecnologias mais pedidas' },
+    { value: topTechnologies.join(', '), label: 'tecnologias mais pedidas' },
   ]
 
   return new ImageResponse(
@@ -31,25 +31,41 @@ export default async function Image() {
           flexDirection: 'column',
           justifyContent: 'space-between',
           padding: 72,
-          background: '#0a0a0a',
-          color: '#ededed',
+          background: '#102231',
+          color: '#eef4f7',
+          position: 'relative',
         }}
       >
+        {/* Centred on the bottom-right corner, the only area the text never reaches. */}
+        {[360, 240, 120].map((d) => (
+          <div
+            key={d}
+            style={{
+              position: 'absolute',
+              bottom: -d / 2,
+              right: -d / 2,
+              width: d,
+              height: d,
+              borderRadius: d,
+              border: '2px solid rgba(92, 196, 200, 0.35)',
+            }}
+          />
+        ))}
         <div style={{ display: 'flex', flexDirection: 'column' }}>
           <div style={{ fontSize: 72 }}>Radar do Emprego Tech PT</div>
-          <div style={{ fontSize: 32, color: '#a1a1aa', marginTop: 16 }}>
+          <div style={{ fontSize: 32, color: '#a9bccb', marginTop: 16 }}>
             O que as empresas tech em Portugal estão a pedir nas vagas
           </div>
         </div>
         <div style={{ display: 'flex', gap: 48 }}>
           {stats.map((stat) => (
             <div key={stat.label} style={{ display: 'flex', flexDirection: 'column' }}>
-              <div style={{ fontSize: 56, color: '#a78bfa' }}>{stat.value}</div>
-              <div style={{ fontSize: 26, color: '#a1a1aa' }}>{stat.label}</div>
+              <div style={{ fontSize: 56, color: '#5cc4c8' }}>{stat.value}</div>
+              <div style={{ fontSize: 26, color: '#a9bccb' }}>{stat.label}</div>
             </div>
           ))}
         </div>
-        <div style={{ fontSize: 24, color: '#71717a' }}>Dados: itjobs.pt · Gustavo Soro Costa</div>
+        <div style={{ fontSize: 24, color: '#a9bccb' }}>Dados do itjobs.pt. Feito por Gustavo Soro Costa.</div>
       </div>
     ),
     size,
