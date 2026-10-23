@@ -55,6 +55,14 @@ describe('BarChart', () => {
     expect(screen.queryByText(/5 vagas \(50%\)/)).not.toBeInTheDocument()
   })
 
+  it('explores the technology the tooltip names when the tooltip itself is clicked', () => {
+    const onSelect = vi.fn()
+    const { container } = render(<BarChart title="T" data={data} total={10} onSelect={onSelect} />)
+    fireEvent.pointerEnter(container.querySelectorAll('svg g')[1], { pointerType: 'mouse' })
+    fireEvent.click(screen.getByText('Clique para explorar'))
+    expect(onSelect).toHaveBeenCalledWith('Vue')
+  })
+
   it('states how many jobs the chart is based on', () => {
     render(<BarChart title="T" data={data} total={10} />)
     expect(screen.getByText('Base: 10 vagas.')).toBeInTheDocument()

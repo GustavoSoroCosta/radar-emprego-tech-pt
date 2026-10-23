@@ -138,11 +138,15 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia', delay
             // The viewBox matches the rendered width, so SVG units are pixels here. Centred over the
             // bar, but kept inside the card so it never gets cut off at either edge. It takes the
             // pointer, so moving the mouse onto it keeps it open instead of hovering the row below.
+            // It covers the row above, so a click on it does what it says rather than nothing.
             style={{
               top: (y(data[hovered].label) ?? 0) - (onSelect ? 44 : 30),
               left: Math.min(Math.max(MARGIN.left + x(data[hovered].count) / 2, 100), width - 100),
             }}
-            className="absolute z-10 -translate-x-1/2 rounded-md bg-ink px-2.5 py-1.5 text-center text-xs whitespace-nowrap text-paper shadow-lg motion-safe:animate-fade"
+            onClick={onSelect && (() => onSelect(data[hovered].label))}
+            className={`absolute z-10 -translate-x-1/2 rounded-md bg-ink px-2.5 py-1.5 text-center text-xs whitespace-nowrap text-paper shadow-lg motion-safe:animate-fade ${
+              onSelect ? 'cursor-pointer' : ''
+            }`}
           >
             <span className="font-semibold">{data[hovered].label}</span>: {jobsLabel(data[hovered].count)} (
             {shareLabel(data[hovered].count, total)})
