@@ -70,7 +70,7 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia', delay
       </figcaption>
       {/* Hovering a row dims the others and shows its job count. Mouse only: the same numbers are
           in the table for screen readers, so this adds no information that is missing elsewhere. */}
-      <div className="relative" onMouseLeave={() => setHovered(null)}>
+      <div className="relative" onPointerLeave={() => setHovered(null)}>
         <svg ref={svgRef} viewBox={`0 0 ${width} ${height}`} aria-hidden="true" className="w-full text-sm">
           {/* Positions go through CSS (style) rather than SVG attributes so they can be transitioned
             when the filters change; motion-safe turns the animation off for prefers-reduced-motion. */}
@@ -78,7 +78,9 @@ export function BarChart({ title, data, total, labelHeader = 'Tecnologia', delay
             <g
               key={d.label}
               style={{ transform: `translateY(${y(d.label)}px)` }}
-              onMouseEnter={() => setHovered(index)}
+              // Mouse only: on a touch screen there is no "leave", so a tap would leave the chart
+              // dimmed with the tooltip stuck open.
+              onPointerEnter={(event) => event.pointerType === 'mouse' && setHovered(index)}
               onClick={onSelect && (() => onSelect(d.label))}
               className={`transition-opacity motion-safe:transition-[transform,opacity] motion-safe:duration-500 ${
                 hovered !== null && hovered !== index ? 'opacity-40' : ''

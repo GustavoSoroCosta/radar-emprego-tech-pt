@@ -1,6 +1,6 @@
 'use client'
 
-import { useMemo, useState, useSyncExternalStore } from 'react'
+import { useMemo, useSyncExternalStore } from 'react'
 import { BarChart } from '@/components/BarChart'
 import { CopyLinkButton } from '@/components/CopyLinkButton'
 import { FilterBar } from '@/components/FilterBar'
@@ -61,13 +61,21 @@ export function Dashboard({ jobs }: { jobs: Job[] }) {
   return (
     <>
       <FilterBar filters={filters} cities={cities} onChange={changeFilters} />
-      <DashboardView jobs={jobs} filters={filters} />
+      <DashboardView jobs={jobs} filters={filters} onChange={changeFilters} />
     </>
   )
 }
 
 /** The numbers and charts for a given set of filters. */
-function DashboardView({ jobs, filters }: { jobs: Job[]; filters: Filters }) {
+function DashboardView({
+  jobs,
+  filters,
+  onChange,
+}: {
+  jobs: Job[]
+  filters: Filters
+  onChange: (filters: Filters) => void
+}) {
   // Filtering ~800 jobs takes well under a millisecond, so there is no need to memoise it.
   const visible = applyFilters(jobs, filters)
   const total = visible.length
@@ -78,20 +86,20 @@ function DashboardView({ jobs, filters }: { jobs: Job[]; filters: Filters }) {
   const companies = countCompanies(visible)
   const areaName = AREA_NAMES[filters.area]
 
-  // The explorer's pick survives filter changes while the technology still appears; otherwise it
-  // falls back to the most requested one.
-  const [picked, setPicked] = useState<string | null>(null)
+  // The explorer's pick lives in the URL with the filters. It survives filter changes while the
+  // technology still appears; otherwise (or if the URL names an unknown one) it falls back to the top one.
   const technologies = countTechnologies(visible, Infinity).map((item) => item.label)
-  const selected = picked && technologies.includes(picked) ? picked : technologies[0]
+  const selected = filters.tech && technologies.includes(filters.tech) ? filters.tech : technologies[0]
+  const pick = (technology: string) => onChange({ ...filters, tech: technology })
 
   function explore(technology: string) {
-    setPicked(technology)
+    pick(technology)
     const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches
     document.getElementById('explorador')?.scrollIntoView({ behavior: reduceMotion ? 'auto' : 'smooth', block: 'nearest' })
   }
 
   const explorer = selected && (
-    <TechExplorer jobs={visible} options={technologies} selected={selected} onSelect={setPicked} delay={400} />
+    <TechExplorer jobs={visible} options={technologies} selected={selected} onSelect={pick} delay={400} />
   )
   const cityChart = (
     <BarChart

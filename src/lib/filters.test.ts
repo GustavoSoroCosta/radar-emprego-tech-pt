@@ -67,6 +67,13 @@ describe('URL round trip', () => {
     expect(filtersFromSearch(new URLSearchParams(search))).toEqual(f)
   })
 
+  it('keeps the explorer technology in the URL so reload and back bring it back', () => {
+    const f = filters({ area: 'frontend', tech: 'Node.js' })
+    const search = filtersToSearch(f)
+    expect(search).toBe('?area=frontend&tecnologia=Node.js')
+    expect(filtersFromSearch(new URLSearchParams(search))).toEqual(f)
+  })
+
   it('accepts the new areas, including "other", from the URL', () => {
     expect(filtersFromSearch(new URLSearchParams('?area=data')).area).toBe('data')
     expect(filtersFromSearch(new URLSearchParams('?area=other')).area).toBe('other')

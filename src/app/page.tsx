@@ -40,7 +40,7 @@ export default async function Home() {
         </div>
         <p className="mt-3 max-w-2xl text-zinc-600 dark:text-zinc-400">
           O que as empresas tech em Portugal estão a pedir nas vagas, com base nas ofertas publicadas no
-          itjobs.pt.{source === 'sample' && ' Neste momento com dados de exemplo.'}
+          itjobs.pt.{source === 'sample' && !error && ' Neste momento com dados de exemplo.'}
         </p>
         {source === 'itjobs' && (
           <p className="mt-4 inline-flex items-center gap-2 rounded-full bg-white px-3 py-1 text-xs text-zinc-700 ring-1 ring-violet-200 dark:bg-zinc-900 dark:text-zinc-300 dark:ring-violet-900">

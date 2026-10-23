@@ -17,7 +17,7 @@ interface FilterBarProps {
 const focusRing = 'focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-violet-500'
 
 const buttonClass =
-  `shrink-0 whitespace-nowrap rounded-full border px-3 py-1.5 text-sm transition-colors ${focusRing} ` +
+  `shrink-0 touch-manipulation whitespace-nowrap rounded-full border px-3 py-1.5 text-sm transition-colors ${focusRing} ` +
   'border-zinc-300 hover:bg-zinc-100 aria-pressed:border-violet-600 aria-pressed:bg-violet-600 aria-pressed:text-white ' +
   'dark:border-zinc-700 dark:hover:bg-zinc-800 dark:aria-pressed:bg-violet-600 ' +
   // High contrast mode drops background colours, so the pressed state would vanish; use the system highlight instead.
