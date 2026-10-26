@@ -16,7 +16,10 @@ const archivo = Archivo({
 });
 
 const title = "Radar do Emprego Tech PT";
-const description = "O que as empresas tech em Portugal estão a pedir nas vagas, com dados do itjobs.pt.";
+// Between 100 and 160 characters: LinkedIn's Post Inspector asks for at least 100, and search
+// results cut longer descriptions.
+const description =
+  "O que as empresas tech em Portugal estão a pedir nas vagas: tecnologias, áreas, cidades e trabalho remoto, com dados do itjobs.pt atualizados todos os dias.";
 
 // Declares the page's own light and dark themes. Samsung Internet only applies its forced dark
 // mode to pages without this meta tag; globals.css handles Chrome with "only light".
