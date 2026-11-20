@@ -7,5 +7,7 @@ export default defineConfig({
   test: {
     environment: 'jsdom',
     setupFiles: ['./src/test/setup.ts'],
+    // The API in server/ has its own Vitest setup (Node + real Postgres).
+    exclude: ['**/node_modules/**', 'server/**'],
   },
 })

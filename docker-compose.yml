@@ -1,0 +1,15 @@
+# Local Postgres for the API (server/). Start with: docker compose up -d db
+services:
+  db:
+    image: postgres:17-alpine
+    environment:
+      POSTGRES_USER: radar
+      POSTGRES_PASSWORD: radar # local only; production uses Neon with its own credentials
+      POSTGRES_DB: radar
+    ports:
+      - "5433:5432"
+    volumes:
+      - radar-db:/var/lib/postgresql/data
+      - ./server/docker/init-test-db.sql:/docker-entrypoint-initdb.d/init-test-db.sql:ro
+volumes:
+  radar-db:
