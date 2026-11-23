@@ -1,0 +1,32 @@
+name: Daily snapshot
+
+# Once a day, as agreed with itjobs: fetch the listings and store that day's counts.
+on:
+  schedule:
+    - cron: "0 6 * * *" # 06:00 UTC
+  workflow_dispatch: # run it by hand from the Actions tab
+
+concurrency: snapshot
+
+jobs:
+  snapshot:
+    # Off until the production database exists: set the repository variable SNAPSHOT_ENABLED=true.
+    if: ${{ vars.SNAPSHOT_ENABLED == 'true' }}
+    runs-on: ubuntu-latest
+    defaults:
+      run:
+        working-directory: server
+    env:
+      DATABASE_URL: ${{ secrets.DATABASE_URL }}
+      ITJOBS_API_KEY: ${{ secrets.ITJOBS_API_KEY }}
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          cache: npm
+          cache-dependency-path: server/package-lock.json
+      - run: npm ci
+      # The schema is idempotent, so applying it every run is safe and keeps production in sync.
+      - run: npm run migrate
+      - run: npm run snapshot
