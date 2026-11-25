@@ -5,6 +5,7 @@ services:
     name: radar-api
     runtime: node
     plan: free # sleeps after 15 min idle; fine because the site fetches once a day on the server
+    region: frankfurt # same region as the Neon database
     rootDir: server
     buildCommand: npm ci
     startCommand: npm start
