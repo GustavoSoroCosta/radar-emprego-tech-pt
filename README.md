@@ -41,6 +41,38 @@ remote, hybrid or on-site. It uses real, daily-updated data from the [itjobs.pt]
 5. **Drawing** (`src/components/BarChart.tsx`) — D3 computes the scales and React renders the SVG. The chart
    measures its own width so labels stay readable on phones.
 
+## Backend: trends over time
+
+The site shows one day. To see how demand changes, `server/` keeps a daily history:
+
+```
+GitHub Actions (daily, 06:00 UTC) ── npm run snapshot ──► itjobs API ──► counts ──► PostgreSQL
+Express API ── GET /api/... ──────────────────────────────────────────────────────────┘
+```
+
+- **Snapshot** (`server/src/scripts/snapshot.ts`) — reuses the site's normalising and counting code and stores
+  one row per day plus the counts per technology, area, city and work model, in a single transaction. Only
+  aggregated numbers are stored, never the ads.
+- **API** (`server/src/app.ts`) — read-only endpoints. Query parameters are validated and a bad one gets a 400
+  with a clear message.
+
+| Endpoint | Returns |
+|---|---|
+| `GET /api/health` | `{ ok, lastSnapshot }` |
+| `GET /api/snapshots/latest` | Totals and counts of the latest day |
+| `GET /api/trends?kind=tech&key=React&days=90` | One point per day: count, total and share |
+| `GET /api/trends/movers?kind=tech&days=30&limit=5` | Biggest rises and falls in share, in percentage points |
+
+Locally, Postgres runs in Docker and the tests hit a real database:
+
+```bash
+docker compose up -d db
+cd server && npm install && npm run migrate && npm test
+```
+
+CI runs the site and API tests on every push. The API is set up for Render (`render.yaml`) with the database
+on Neon.
+
 ## Accessibility
 
 Lighthouse scores 100 in light and dark mode, on desktop and mobile. Beyond that it was checked by hand
@@ -52,6 +84,8 @@ the filters change, and the chart tooltip closes with Escape.
 ## Stack
 
 Next.js (App Router) · TypeScript · Tailwind CSS · D3.js · Vitest + Testing Library
+
+Backend: Node.js · Express · PostgreSQL (`pg`, plain SQL) · Docker · GitHub Actions · supertest
 
 ## Running locally
 

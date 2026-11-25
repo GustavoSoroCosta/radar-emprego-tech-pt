@@ -1,0 +1,16 @@
+# Render Blueprint for the read-only API in server/.
+# The API only imports code from server/, so Render can build that folder on its own.
+services:
+  - type: web
+    name: radar-api
+    runtime: node
+    plan: free # sleeps after 15 min idle; fine because the site fetches once a day on the server
+    rootDir: server
+    buildCommand: npm ci
+    startCommand: npm start
+    healthCheckPath: /api/health
+    envVars:
+      - key: NODE_VERSION
+        value: "24"
+      - key: DATABASE_URL # Neon connection string, entered in the Render dashboard
+        sync: false
