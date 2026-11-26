@@ -40,6 +40,15 @@ async function seed() {
   })
 }
 
+describe('unknown routes', () => {
+  it('answer 404 with a JSON error', async () => {
+    const res = await request(app).get('/api/nope')
+    expect(res.status).toBe(404)
+    expect(res.type).toBe('application/json')
+    expect(res.body).toEqual({ error: 'Not found' })
+  })
+})
+
 describe('GET /api/snapshots/latest', () => {
   it('answers 404 before the first snapshot', async () => {
     const res = await request(app).get('/api/snapshots/latest')

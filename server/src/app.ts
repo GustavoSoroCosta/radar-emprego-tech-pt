@@ -50,6 +50,11 @@ export function createApp(db: pg.Pool): express.Express {
     res.json({ kind, days, from: ends.from, to: ends.to, ...findMovers(ends.first, ends.last, { limit }) })
   })
 
+  // Unknown routes get JSON like every other answer, not Express's default HTML page.
+  app.use((_req, res) => {
+    res.status(404).json({ error: 'Not found' })
+  })
+
   // Express 5 sends errors thrown in async handlers here.
   app.use((error: unknown, _req: express.Request, res: express.Response, _next: express.NextFunction) => {
     if (error instanceof BadRequest) {
